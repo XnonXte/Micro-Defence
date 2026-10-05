@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91a59b90df466f748bedb7befa61a747, type: 3}
+  m_Name: SwarmVirus
+  m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Data.EnemyDataSO
+  enemyType: 3
+  enemyName: 
+  enemyPrefab: {fileID: 0}
+  baseHealth: 100
+  moveSpeed: 2
+  flatArmor: 0
+  damageToCell: 15
+  plasmaReward: 10
+  isSplitter: 0
+  splitChildData: {fileID: 0}
+  splitCount: 3
+  isBoss: 0
+  replicationInterval: 8
+  replicationMinionPool: []
