@@ -2722,7 +2722,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Core.WaveManager
   waves:
-  - {fileID: 11400000, guid: 974d8e8478d694e4285698665ffb3e8e, type: 2}
+  - {fileID: 11400000, guid: 37279c02d8c03194f9d48b10f63d881c, type: 2}
   - {fileID: 11400000, guid: 03082dd1ac048f14997efab321fb3c67, type: 2}
   - {fileID: 11400000, guid: 37279c02d8c03194f9d48b10f63d881c, type: 2}
   - {fileID: 11400000, guid: 711b6d85dc845f84a9c3b97b387a20f8, type: 2}

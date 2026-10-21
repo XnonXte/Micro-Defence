@@ -16,7 +16,7 @@ MonoBehaviour:
   enemyName: 
   enemyPrefab: {fileID: 7444604671867903440, guid: 0e268b1ea4a8f0b46af04263df9e22d8, type: 3}
   baseHealth: 100
-  moveSpeed: 2
+  moveSpeed: 10
   flatArmor: 0
   damageToCell: 15
   plasmaReward: 10

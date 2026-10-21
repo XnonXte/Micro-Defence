@@ -19,16 +19,16 @@ MonoBehaviour:
   towerPrefab: {fileID: 2222918456178901736, guid: e74bace94dcd88e4ead0d32efdccc337, type: 3}
   icon: {fileID: 6483804897575239260, guid: d8abde803c536044994b0b3f3b5905ca, type: 3}
   projectileConfig:
-    speed: 20
-    size: 4
-    color: {r: 1, g: 0.15, b: 0.8, a: 1}
+    speed: 10
+    size: 15
+    color: {r: 0, g: 1, b: 0.9828807, a: 1}
     lifetime: 10
   tiers:
   - tierLevel: 1
     tierName: T-Cell Tier 1
     upgradeCost: 0
     damage: 20
-    attackSpeed: 2
+    attackSpeed: 0.5
     range: 30000
     maxHealth: 100
     damageReductionPercent: 0

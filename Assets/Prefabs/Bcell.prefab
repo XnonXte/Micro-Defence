@@ -121,6 +121,8 @@ MonoBehaviour:
     specialEffectMagnitude: 0
     specialEffectDuration: 0
   animator: {fileID: -2055113730861603488}
+  rotateTowardTarget: 1
+  aimRotationOffset: 90
 --- !u!95 &-2055113730861603488
 Animator:
   serializedVersion: 7

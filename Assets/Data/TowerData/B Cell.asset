@@ -19,16 +19,16 @@ MonoBehaviour:
   towerPrefab: {fileID: 2535548714839134108, guid: 4cf4d35f90aef95499d3920d3f58e409, type: 3}
   icon: {fileID: 7482667652216324306, guid: c4b91cc618477cb4780ed63b560c5869, type: 3}
   projectileConfig:
-    speed: 20
-    size: 4
-    color: {r: 0, g: 1, b: 1, a: 1}
+    speed: 10
+    size: 15
+    color: {r: 0.094923854, g: 1, b: 0, a: 1}
     lifetime: 10
   tiers:
   - tierLevel: 1
     tierName: 
     upgradeCost: 0
     damage: 20
-    attackSpeed: 2
+    attackSpeed: 0.5
     range: 30000
     maxHealth: 0
     damageReductionPercent: 3000
