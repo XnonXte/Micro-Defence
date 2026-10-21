@@ -18,6 +18,11 @@ MonoBehaviour:
   baseCost: 0
   towerPrefab: {fileID: 6769014314070698240, guid: da77ba14c3246b54b858e665e1cd6a30, type: 3}
   icon: {fileID: 0}
+  projectileConfig:
+    speed: 8
+    size: 0.3
+    color: {r: 0, g: 1, b: 1, a: 1}
+    lifetime: 10
   tiers:
   - tierLevel: 0
     tierName: 
@@ -25,7 +30,7 @@ MonoBehaviour:
     damage: 0
     attackSpeed: 0
     range: 0
-    maxHealth: 100
+    maxHealth: 200
     damageReductionPercent: 0
     specialAbility: 0
     specialEffectMagnitude: 0

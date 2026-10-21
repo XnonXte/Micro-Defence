@@ -222,10 +222,8 @@ namespace MicroDefense.Grid
 
         private void PlaceTowerOnTilemapCell(Vector3Int cellPos, Vector3 spawnPos, TowerDataSO towerData)
         {
-            if (PlasmaManager.Instance != null && !PlasmaManager.Instance.TrySpendPlasma(towerData.baseCost))
-            {
+            if (!TryPayTowerCost(towerData))
                 return;
-            }
 
             GameObject spawned = SpawnTowerInstance(towerData, spawnPos);
             occupiedTilemapCells.Add(cellPos);
@@ -233,16 +231,23 @@ namespace MicroDefense.Grid
 
         private void PlaceTowerOnGridTile(GridTile tile, TowerDataSO towerData)
         {
-            if (PlasmaManager.Instance != null && !PlasmaManager.Instance.TrySpendPlasma(towerData.baseCost))
-            {
+            if (!TryPayTowerCost(towerData))
                 return;
-            }
 
             Vector3 spawnPos = new Vector3(tile.transform.position.x, tile.transform.position.y, 0f);
             GameObject spawned = SpawnTowerInstance(towerData, spawnPos);
 
             tile.IsOccupied = true;
             tile.PlacedTower = spawned;
+        }
+
+        private bool TryPayTowerCost(TowerDataSO towerData)
+        {
+            if (towerData == null) return false;
+            if (PlasmaManager.Instance == null) return true;
+
+            int cost = Mathf.Max(0, towerData.baseCost);
+            return PlasmaManager.Instance.TrySpendPlasma(cost);
         }
 
         private GameObject SpawnTowerInstance(TowerDataSO towerData, Vector3 position)

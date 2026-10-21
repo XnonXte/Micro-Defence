@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -23,6 +24,9 @@ namespace MicroDefense.Enemies
         private NavMeshAgent agent;
         private EnemyBase enemy;
         private Transform targetDestination;
+        private Vector3 navTargetPosition;
+        private bool hasNavTarget;
+        private bool useFallbackMovement;
 
         // Transform tower yang sedang mem-block enemy ini
         private Transform currentBlocker;
@@ -48,11 +52,80 @@ namespace MicroDefense.Enemies
         public void InitializeNavMesh(Transform destination)
         {
             targetDestination = destination;
+            StartCoroutine(InitializeNavMeshWhenReady());
+        }
+
+        private IEnumerator InitializeNavMeshWhenReady()
+        {
+            yield return null;
+
+            if (agent == null || targetDestination == null) yield break;
+            if (!agent.isOnNavMesh)
+            {
+                NavMeshHit spawnHit;
+                if (NavMesh.SamplePosition(transform.position, out spawnHit, 5f, NavMesh.AllAreas))
+                {
+                    agent.Warp(spawnHit.position);
+                }
+            }
+
+            if (!agent.isOnNavMesh)
+            {
+                useFallbackMovement = true;
+                Debug.LogWarning($"[NavMeshPathFollower] Spawn position {transform.position} is not on NavMesh.");
+                yield break;
+            }
+
+            yield return StartCoroutine(SetupNavMeshPathWhenReady());
+        }
+
+        private IEnumerator SetupNavMeshPathWhenReady()
+        {
+            for (int attempt = 0; attempt < 30; attempt++)
+            {
+                if (TrySetupNavMeshPath()) yield break;
+                yield return new WaitForSeconds(0.1f);
+            }
+
+            useFallbackMovement = true;
+            agent.isStopped = true;
+            Debug.LogWarning($"[NavMeshPathFollower] No complete route after waiting for NavMesh. Using direct fallback movement from {transform.position}.");
+        }
+
+        private bool TrySetupNavMeshPath()
+        {
+            if (agent == null || targetDestination == null) return false;
             if (agent != null && enemy != null && enemy.Data != null)
                 agent.speed = enemy.currentSpeed;
 
             if (agent != null && targetDestination != null)
-                agent.SetDestination(targetDestination.position);
+            {
+                Vector3 targetPos = targetDestination.position;
+                NavMeshHit hit;
+
+                if (NavMesh.SamplePosition(targetPos, out hit, 5f, NavMesh.AllAreas))
+                {
+                    targetPos = hit.position;
+                }
+                else
+                {
+                    return false;
+                }
+
+                NavMeshPath path = new NavMeshPath();
+                if (!agent.CalculatePath(targetPos, path) || path.status != NavMeshPathStatus.PathComplete)
+                {
+                    return false;
+                }
+
+                useFallbackMovement = false;
+                navTargetPosition = targetPos;
+                hasNavTarget = true;
+                agent.SetPath(path);
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -76,6 +149,12 @@ namespace MicroDefense.Enemies
             if (enemy == null || agent == null) return;
 
             agent.speed = enemy.currentSpeed;
+
+            if (useFallbackMovement)
+            {
+                MoveDirectlyToTarget();
+                return;
+            }
 
             // --- Prioritas 1: Sedang di-block oleh tower ---
             if (enemy.IsBlocked)
@@ -116,8 +195,20 @@ namespace MicroDefense.Enemies
 
             // --- Jalan normal menuju tujuan akhir ---
             agent.isStopped = false;
-            if (agent.destination != targetDestination?.position && targetDestination != null)
-                agent.SetDestination(targetDestination.position);
+            if (targetDestination != null && (!hasNavTarget || (navTargetPosition - targetDestination.position).sqrMagnitude > 0.04f))
+            {
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(targetDestination.position, out hit, 5f, NavMesh.AllAreas))
+                {
+                    NavMeshPath path = new NavMeshPath();
+                    if (agent.CalculatePath(hit.position, path) && path.status == NavMeshPathStatus.PathComplete)
+                    {
+                        navTargetPosition = hit.position;
+                        hasNavTarget = true;
+                        agent.SetPath(path);
+                    }
+                }
+            }
 
             // Cek apakah sudah sampai tujuan
             if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.1f)
@@ -127,6 +218,22 @@ namespace MicroDefense.Enemies
                     enemy.OnReachedEndPath();
                 }
             }
+        }
+
+        private void MoveDirectlyToTarget()
+        {
+            if (targetDestination == null) return;
+
+            Vector3 offset = targetDestination.position - transform.position;
+            offset.z = 0f;
+            float distance = offset.magnitude;
+            if (distance <= stopDistanceFromBlocker)
+            {
+                enemy.OnReachedEndPath();
+                return;
+            }
+
+            transform.position += offset.normalized * enemy.currentSpeed * Time.deltaTime;
         }
 
         private bool IsBlockedByEnemyAhead()

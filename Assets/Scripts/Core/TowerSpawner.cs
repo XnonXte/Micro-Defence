@@ -23,6 +23,12 @@ namespace MicroDefense.Core
         [Header("Auto Spawn on Start")]
         [SerializeField] private bool autoSpawnOnStart = false;
 
+        private void Start()
+        {
+            if (autoSpawnOnStart)
+                SpawnTestTowers();
+        }
+
         public void SpawnTestTowers()
         {
             if (bCellData != null && bCellData.tiers.Count > 0)
@@ -37,27 +43,31 @@ namespace MicroDefense.Core
 
         private void SpawnTower(TowerDataSO towerData, Vector3 position, string name)
         {
+            if (towerData == null) return;
+            if (PlasmaManager.Instance != null && !PlasmaManager.Instance.TrySpendPlasma(Mathf.Max(0, towerData.baseCost)))
+                return;
+
             GameObject towerObj = new GameObject(name);
             towerObj.transform.position = position;
 
             // Add components based on tower type
             if (name.Contains("B-Cell"))
             {
-                AddSpriteRenderer(towerObj, Color.cyan);
+                AddSpriteRenderer(towerObj, towerData, Color.cyan);
                 AddCircleCollider(towerObj, 3f);
                 var bCell = towerObj.AddComponent<BCellTower>();
                 bCell.SetTowerData(towerData);
             }
             else if (name.Contains("T-Cell"))
             {
-                AddSpriteRenderer(towerObj, Color.yellow);
+                AddSpriteRenderer(towerObj, towerData, Color.yellow);
                 AddCircleCollider(towerObj, 2f);
                 var tCell = towerObj.AddComponent<TCellTower>();
                 tCell.SetTowerData(towerData);
             }
             else if (name.Contains("Macrophage"))
             {
-                AddSpriteRenderer(towerObj, Color.green);
+                AddSpriteRenderer(towerObj, towerData, Color.green);
                 AddCircleCollider(towerObj, 2.5f);
                 var macro = towerObj.AddComponent<MacrophageTower>();
                 macro.SetTowerData(towerData);
@@ -66,20 +76,15 @@ namespace MicroDefense.Core
             // (no log)
         }
 
-        private void AddSpriteRenderer(GameObject obj, Color color)
+        private void AddSpriteRenderer(GameObject obj, TowerDataSO towerData, Color fallbackColor)
         {
-            var sprite = obj.AddComponent<SpriteRenderer>();
-            sprite.color = color;
-            // Create simple circle sprite programmatically
-            Texture2D texture = new Texture2D(64, 64, TextureFormat.RGBA32, false);
-            Color[] pixels = new Color[64 * 64];
-            for (int i = 0; i < pixels.Length; i++)
-            {
-                pixels[i] = color;
-            }
-            texture.SetPixels(pixels);
-            texture.Apply();
-            sprite.sprite = Sprite.Create(texture, new Rect(0, 0, 64, 64), new Vector2(0.5f, 0.5f), 64);
+            var spriteRenderer = obj.AddComponent<SpriteRenderer>();
+            Sprite sourceSprite = towerData != null && towerData.towerPrefab != null
+                ? towerData.towerPrefab.GetComponent<SpriteRenderer>()?.sprite
+                : null;
+
+            spriteRenderer.sprite = sourceSprite;
+            spriteRenderer.color = sourceSprite != null ? Color.white : fallbackColor;
         }
 
         private void AddCircleCollider(GameObject obj, float radius)

@@ -17,7 +17,7 @@ namespace MicroDefense.Core
     {
         public static GameManager Instance { get; private set; }
 
-        public GameState CurrentState { get; private set; } = GameState.Preparation;
+        public GameState CurrentState { get; private set; } = GameState.MainMenu;
 
         public event Action<GameState> OnGameStateChanged;
 

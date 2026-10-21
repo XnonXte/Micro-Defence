@@ -128,9 +128,9 @@ namespace MicroDefense.Enemies
 
         protected virtual void Die()
         {
-            if (PlasmaManager.Instance != null && enemyData != null)
+            if (enemyData != null && PlasmaManager.Instance != null)
             {
-                PlasmaManager.Instance.AddPlasma(enemyData.plasmaReward);
+                PlasmaManager.Instance.SpawnDrop(transform.position, enemyData.plasmaReward);
             }
 
             OnEnemyDied?.Invoke();
@@ -141,8 +141,15 @@ namespace MicroDefense.Enemies
         {
             if (LeakManager.Instance != null && enemyData != null)
             {
-                LeakManager.Instance.RegisterLeak(1);
+                // Gunakan damage dari enemyData, default 1 jika tidak ada
+                int damage = Mathf.RoundToInt(enemyData.damageToCell);
+                if (damage <= 0) damage = 1;
+                
+                LeakManager.Instance.RegisterLeak(damage);
+                Debug.Log($"[EnemyBase] {enemyData.enemyName} reached target! Dealt {damage} damage to player.");
             }
+            
+            OnEnemyDied?.Invoke(); // Trigger event untuk WaveManager
             Destroy(gameObject);
         }
     }

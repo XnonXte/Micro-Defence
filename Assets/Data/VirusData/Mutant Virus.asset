@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Data.EnemyDataSO
   enemyType: 1
   enemyName: 
-  enemyPrefab: {fileID: 0}
+  enemyPrefab: {fileID: 8847551451954189412, guid: cfc08744ecb20b34c9d73d0b2d34fa90, type: 3}
   baseHealth: 100
   moveSpeed: 2
   flatArmor: 0

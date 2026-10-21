@@ -89,7 +89,8 @@ namespace MicroDefense.Towers
 
         protected EnemyBase FindNearestEnemy(float range)
         {
-            EnemyBase[] enemies = FindObjectsOfType<EnemyBase>();
+            if (range <= 0f) range = 5f;
+            EnemyBase[] enemies = FindObjectsByType<EnemyBase>();
             EnemyBase nearest = null;
             float minDistance = float.MaxValue;
 
@@ -110,7 +111,8 @@ namespace MicroDefense.Towers
 
         protected List<EnemyBase> FindEnemiesInRange(float range)
         {
-            EnemyBase[] enemies = FindObjectsOfType<EnemyBase>();
+            if (range <= 0f) range = 5f;
+            EnemyBase[] enemies = FindObjectsByType<EnemyBase>();
             List<EnemyBase> result = new List<EnemyBase>();
 
             foreach (var enemy in enemies)
@@ -125,6 +127,64 @@ namespace MicroDefense.Towers
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Spawn projectile yang menuju ke target enemy
+        /// ADJUSTABLE: Damage dari currentTierStats.damage
+        /// </summary>
+        protected void SpawnProjectile(EnemyBase target)
+        {
+            SpawnProjectile(target, false, currentTierStats.damage);
+        }
+
+        protected void SpawnProjectile(EnemyBase target, bool isTrueDamage, float damage)
+        {
+            if (target == null || towerData == null) return;
+
+            GameObject projectileObj = new GameObject("Projectile");
+            projectileObj.transform.position = transform.position;
+            projectileObj.layer = gameObject.layer;
+
+            // Add sprite renderer
+            SpriteRenderer sr = projectileObj.AddComponent<SpriteRenderer>();
+            sr.sortingOrder = 5;
+
+            // Create simple circle projectile (cyan untuk B-Cell)
+            Texture2D tex = new Texture2D(16, 16, TextureFormat.RGBA32, false);
+            Color[] pixels = new Color[256];
+            Vector2 center = Vector2.one * 8;
+
+            for (int i = 0; i < 256; i++)
+            {
+                int y = i / 16;
+                int x = i % 16;
+                pixels[i] = Vector2.Distance(new Vector2(x, y), center) <= 7 ? Color.cyan : new Color(0, 0, 0, 0);
+            }
+
+            tex.SetPixels(pixels);
+            tex.Apply();
+
+            Sprite sprite = Sprite.Create(tex, new Rect(0, 0, 16, 16), Vector2.one * 0.5f, 100);
+            sr.sprite = sprite;
+
+            // Add collider
+            CircleCollider2D collider = projectileObj.AddComponent<CircleCollider2D>();
+            collider.radius = 0.25f;
+            collider.isTrigger = true;
+
+            // Add projectile script
+            Projectile projectile = projectileObj.AddComponent<Projectile>();
+            
+            if (damage <= 0)
+            {
+                damage = 10f; // Fallback default
+                Debug.LogWarning($"[TowerBase] Damage is 0 or less in {towerData.towerName} Tier {currentTierLevel}! Using fallback: {damage}");
+            }
+
+            projectile.SetTarget(target, damage, towerData.ProjectileConfig, isTrueDamage);
+            
+            Debug.Log($"[TowerBase] Projectile spawned with damage: {damage} to target: {target.name}");
         }
     }
 }

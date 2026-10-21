@@ -56,7 +56,7 @@ namespace MicroDefense.Data
         public GameObject towerPrefab;
         public Sprite icon;
 
-        [Header("Projectile Config (B-Cell only)")]
+        [Header("Projectile Config")]
         [SerializeField] private ProjectileConfig projectileConfig = new ProjectileConfig
         {
             speed = 8f,
@@ -65,18 +65,7 @@ namespace MicroDefense.Data
             lifetime = 10f
         };
 
-        // Property untuk access projectileConfig (hanya untuk BCell)
-        public ProjectileConfig ProjectileConfig
-        {
-            get
-            {
-                if (towerType == TowerType.BCell)
-                {
-                    return projectileConfig;
-                }
-                return default;
-            }
-        }
+        public ProjectileConfig ProjectileConfig => projectileConfig;
 
         [Header("Upgrade Tiers (1 to 3)")]
         public List<TowerTierData> tiers = new List<TowerTierData>();
