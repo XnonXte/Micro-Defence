@@ -67,6 +67,8 @@ namespace MicroDefense.Towers
                 if (PlasmaManager.Instance.TrySpendPlasma(cost))
                 {
                     ApplyTierStats(currentTierLevel + 1);
+                    MicroDefense.UI.TowerShopUI shop = FindAnyObjectByType<MicroDefense.UI.TowerShopUI>();
+                    if (shop != null) shop.RefreshUI();
                     return true;
                 }
             }

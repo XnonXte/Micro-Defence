@@ -35,3 +35,25 @@ MonoBehaviour:
     specialAbility: 0
     specialEffectMagnitude: 0
     specialEffectDuration: 0
+  - tierLevel: 2
+    tierName: 
+    upgradeCost: 50
+    damage: 40
+    attackSpeed: 2
+    range: 30000
+    maxHealth: 0
+    damageReductionPercent: 3000
+    specialAbility: 0
+    specialEffectMagnitude: 0
+    specialEffectDuration: 0
+  - tierLevel: 3
+    tierName: 
+    upgradeCost: 0
+    damage: 20
+    attackSpeed: 0.5
+    range: 30000
+    maxHealth: 0
+    damageReductionPercent: 3000
+    specialAbility: 0
+    specialEffectMagnitude: 0
+    specialEffectDuration: 0

@@ -267,6 +267,8 @@ namespace MicroDefense.Grid
             {
                 towerComp.SetTowerData(towerData);
                 towerComp.ApplyTierStats(1);
+                MicroDefense.UI.TowerShopUI shop = FindAnyObjectByType<MicroDefense.UI.TowerShopUI>();
+                if (shop != null) shop.RegisterPlacedTower(towerComp);
             }
 
             return spawned;
