@@ -15,7 +15,7 @@ MonoBehaviour:
   towerType: 1
   towerName: macrophage
   description: 
-  baseCost: 0
+  baseCost: 60
   towerPrefab: {fileID: 6769014314070698240, guid: da77ba14c3246b54b858e665e1cd6a30, type: 3}
   icon: {fileID: 0}
   projectileConfig:
