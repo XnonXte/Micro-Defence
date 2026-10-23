@@ -128,7 +128,7 @@
 
             private void UpdatePlasma(int amount)
             {
-                if (plasmaText != null) plasmaText.text = $"PLASMA {amount}";
+                if (plasmaText != null) plasmaText.text = $"{amount}";
                 RefreshTowerCards();
             }
 
@@ -147,7 +147,7 @@
                     if (towerNameTexts != null && i < towerNameTexts.Length && towerNameTexts[i] != null)
                         towerNameTexts[i].text = tower != null ? tower.towerName : "TOWER";
                     if (towerCostTexts != null && i < towerCostTexts.Length && towerCostTexts[i] != null)
-                        towerCostTexts[i].text = tower != null ? $"COST: {tower.baseCost} PLASMA" : "COST: -";
+                        towerCostTexts[i].text = tower != null ? $" {tower.baseCost}" : "0";
 
                     int upgradeCost = GetNextUpgradeCost(tower);
                     bool canUpgrade = placedTowers[i] != null && placedTowers[i].CanUpgrade(out upgradeCost);
