@@ -5,20 +5,36 @@ using UnityEngine;
 namespace MicroDefense.Data
 {
     [Serializable]
-    public struct EnemySpawnGroup
+    public struct PathSpawnGroup
     {
+        public int pathIndex;           // Which path to spawn on (0 or 1)
         public EnemyDataSO enemyData;
         public int count;
-        public float spawnInterval;   // Time between spawns in seconds
-        public float initialDelay;    // Delay before starting this group spawn
+        public float spawnInterval;
+        public float initialDelay;
+    }
+
+    [Serializable]
+    public struct SpawnPath
+    {
+        public string pathName;
+        public Transform spawnPoint;
+        public Transform targetPoint;
+        public List<Transform> waypoints;
+        public bool useNavMesh;
     }
 
     [CreateAssetMenu(fileName = "NewWaveData", menuName = "Micro-Defense/Wave Data")]
     public class WaveDataSO : ScriptableObject
     {
+        [Header("Wave Info")]
         public int waveNumber;
         public string waveName;
-        public List<EnemySpawnGroup> spawnGroups = new List<EnemySpawnGroup>();
+        
+        [Header("Spawn Configuration")]
+        public List<PathSpawnGroup> pathSpawnGroups = new List<PathSpawnGroup>();
+        
+        [Header("Rewards")]
         public int completionBonusPlasma = 50;
     }
 }

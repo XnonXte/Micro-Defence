@@ -1,4 +1,5 @@
 using MicroDefense.Core;
+using MicroDefense.Grid;
 using UnityEngine;
 
 public sealed class GameSceneSetup : MonoBehaviour
@@ -10,6 +11,7 @@ public sealed class GameSceneSetup : MonoBehaviour
         EnsureManager<PlasmaManager>("PlasmaManager");
         EnsureManager<LeakManager>("PlayerHealth");
         EnsureManager<WaveManager>("WaveManager");
+        EnsureManager<PlacementGridManager>("PlacementGridManager");
 
         var ui = FindAnyObjectByType<SimpleUI>();
         if (ui == null)

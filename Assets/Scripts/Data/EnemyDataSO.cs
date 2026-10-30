@@ -26,6 +26,13 @@ namespace MicroDefense.Data
         public float damageToCell = 15f;     // DPS dealt when damaging player cell/leak
         public int plasmaReward = 10;        // Plasma currency awarded on death
 
+        [Header("Swarm Virus Life Phases")]
+        public int swarmLives = 3;
+        public float swarmHealthPerLife = 100f;
+        public Sprite swarmSpriteLife1;
+        public Sprite swarmSpriteLife2;
+        public Sprite swarmSpriteLife3;
+
         [Header("Special Behaviors")]
         public bool isSplitter;              // Swarm Virus feature
         public EnemyDataSO splitChildData;   // Mini Virus data

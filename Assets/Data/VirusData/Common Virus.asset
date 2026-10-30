@@ -16,10 +16,15 @@ MonoBehaviour:
   enemyName: Common Virus
   enemyPrefab: {fileID: 5564637182516725744, guid: fd8226d00922d9f4ca929491bedc600b, type: 3}
   baseHealth: 100
-  moveSpeed: 8
+  moveSpeed: 4
   flatArmor: 0
   damageToCell: 15
   plasmaReward: 10
+  swarmLives: 3
+  swarmHealthPerLife: 100
+  swarmSpriteLife1: {fileID: 0}
+  swarmSpriteLife2: {fileID: 0}
+  swarmSpriteLife3: {fileID: 0}
   isSplitter: 0
   splitChildData: {fileID: 0}
   splitCount: 3

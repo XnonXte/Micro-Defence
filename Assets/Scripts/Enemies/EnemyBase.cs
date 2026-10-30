@@ -30,6 +30,11 @@ namespace MicroDefense.Enemies
         public event Action<float, float> OnHealthChanged; // (current, max)
         public event Action OnEnemyDied;
 
+        protected void PublishHealthChanged(float maxHealth)
+        {
+            OnHealthChanged?.Invoke(currentHealth, maxHealth);
+        }
+
         protected virtual void Awake()
         {
             if (enemyData != null)

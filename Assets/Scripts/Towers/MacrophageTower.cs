@@ -8,6 +8,10 @@ namespace MicroDefense.Towers
 {
     public class MacrophageTower : TowerBase
     {
+        [Header("Aiming Rotation")]
+        [SerializeField] private bool rotateTowardTarget = true;
+        [SerializeField] private float aimRotationOffset = 90f;
+
         [Header("Macrophage Status")]
         public float currentHealth;
         public float maxHealth;
@@ -24,6 +28,8 @@ namespace MicroDefense.Towers
         public override void ApplyTierStats(int tierLevel)
         {
             base.ApplyTierStats(tierLevel);
+            if (currentTierStats.range < 5f)
+                currentTierStats.range = 5f;
             maxHealth = currentTierStats.maxHealth;
             currentHealth = maxHealth;
         }
@@ -41,6 +47,18 @@ namespace MicroDefense.Towers
         private void MaintainBlockingAndAbsorbDamage()
         {
             List<EnemyBase> enemiesInRange = FindEnemiesInRange(currentTierStats.range);
+            EnemyBase nearestEnemy = FindNearestEnemy(currentTierStats.range);
+
+            if (rotateTowardTarget && nearestEnemy != null)
+            {
+                Vector3 direction = nearestEnemy.transform.position - transform.position;
+                direction.z = 0f;
+                if (direction.sqrMagnitude > 0.0001f)
+                {
+                    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    transform.rotation = Quaternion.Euler(0f, 0f, angle + aimRotationOffset);
+                }
+            }
 
             // Unblock enemies that left range or died
             for (int i = currentlyBlockedEnemies.Count - 1; i >= 0; i--)
@@ -51,7 +69,6 @@ namespace MicroDefense.Towers
                     if (enemy != null)
                     {
                         enemy.SetBlocked(false);
-                        // Reset NavMeshPathFollower blocker info
                         var navFollower = enemy.GetComponent<NavMeshPathFollower>();
                         if (navFollower != null) navFollower.SetBlockedBy(false);
                     }
@@ -59,7 +76,6 @@ namespace MicroDefense.Towers
                 }
             }
 
-            // Block new enemies in range & calculate incoming damage
             float incomingDamage = 0f;
             foreach (var enemy in enemiesInRange)
             {
@@ -68,12 +84,10 @@ namespace MicroDefense.Towers
                 if (!currentlyBlockedEnemies.Contains(enemy))
                 {
                     enemy.SetBlocked(true);
-                    // Beri tahu NavMeshPathFollower posisi tower ini agar enemy tidak berhenti jauh
                     var navFollower = enemy.GetComponent<NavMeshPathFollower>();
                     if (navFollower != null) navFollower.SetBlockedBy(true, transform);
                     currentlyBlockedEnemies.Add(enemy);
 
-                    // Hook Tier 3 Phagocytosis
                     if (currentTierStats.specialAbility == SpecialAbilityType.ContinuousPhagocytosis)
                     {
                         enemy.OnEnemyDied -= HandleEnemyDiedWhileBlocked;
@@ -81,14 +95,12 @@ namespace MicroDefense.Towers
                     }
                 }
 
-                // Collect enemy DPS
                 if (enemy.Data != null)
                 {
                     incomingDamage += enemy.Data.damageToCell * Time.deltaTime;
                 }
             }
 
-            // Absorb incoming DPS from blocked enemies
             if (incomingDamage > 0f)
             {
                 TakeDamage(incomingDamage);
@@ -99,7 +111,6 @@ namespace MicroDefense.Towers
         {
             if (currentlyBlockedEnemies.Count == 0) return false;
 
-            // Melee Cleave attack to all currently blocked enemies
             for (int i = currentlyBlockedEnemies.Count - 1; i >= 0; i--)
             {
                 EnemyBase enemy = currentlyBlockedEnemies[i];
@@ -114,17 +125,17 @@ namespace MicroDefense.Towers
 
         public void TakeDamage(float rawDamage)
         {
-            // Tier 2: 15% Damage Reduction
             float reductionFactor = 1.0f;
             if (currentTierStats.specialAbility == SpecialAbilityType.DamageReduction)
             {
-                reductionFactor = 1.0f - Mathf.Clamp01(currentTierStats.damageReductionPercent / 100f);
+                reductionFactor = 0.85f; // 15% damage reduction
             }
-            
-            float finalDamage = rawDamage * reductionFactor;
 
+            float finalDamage = rawDamage * reductionFactor;
             currentHealth -= finalDamage;
-            
+            if (currentHealth < 0) currentHealth = 0;
+
+            // Macrophage menerima damage untuk menahan virus, tetapi virus TIDAK ikut hancur saat Macrophage mati
             if (currentHealth <= 0)
             {
                 Die();
@@ -133,15 +144,14 @@ namespace MicroDefense.Towers
 
         private void HandleEnemyDiedWhileBlocked()
         {
-            if (currentTierStats.specialAbility == SpecialAbilityType.ContinuousPhagocytosis && currentHealth > 0)
-            {
-                float healAmount = maxHealth * 0.05f; // 5% Max HP
-                currentHealth = Mathf.Min(maxHealth, currentHealth + healAmount);
-            }
+            // Tier 3 Special: Heal Macrophage 5% of Max HP on enemy death while blocked
+            float healAmount = maxHealth * 0.05f;
+            currentHealth = Mathf.Min(maxHealth, currentHealth + healAmount);
         }
 
-        private void UnblockAllEnemies()
+        private void Die()
         {
+            // Unblock all enemies before destroying
             foreach (var enemy in currentlyBlockedEnemies)
             {
                 if (enemy != null)
@@ -149,21 +159,10 @@ namespace MicroDefense.Towers
                     enemy.SetBlocked(false);
                     var navFollower = enemy.GetComponent<NavMeshPathFollower>();
                     if (navFollower != null) navFollower.SetBlockedBy(false);
-                    enemy.OnEnemyDied -= HandleEnemyDiedWhileBlocked;
                 }
             }
             currentlyBlockedEnemies.Clear();
-        }
-
-        private void Die()
-        {
-            UnblockAllEnemies();
             Destroy(gameObject);
-        }
-
-        private void OnDestroy()
-        {
-            UnblockAllEnemies();
         }
     }
 }

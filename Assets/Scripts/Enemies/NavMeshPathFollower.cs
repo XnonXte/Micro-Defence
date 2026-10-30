@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -27,6 +28,8 @@ namespace MicroDefense.Enemies
         private Vector3 navTargetPosition;
         private bool hasNavTarget;
         private bool useFallbackMovement;
+        private List<Transform> waypoints = new List<Transform>();
+        private int currentWaypointIndex = 0;
 
         // Transform tower yang sedang mem-block enemy ini
         private Transform currentBlocker;
@@ -45,7 +48,17 @@ namespace MicroDefense.Enemies
             if (enemyLayer == 0)
             {
                 int layer = LayerMask.NameToLayer("Enemy");
-                enemyLayer = (layer >= 0) ? (1 << layer) : Physics2D.AllLayers;
+                if (layer >= 0)
+                {
+                    enemyLayer = (1 << layer);
+                }
+                else
+                {
+                    // Jika layer Enemy tidak ada, gunakan layer Default (0) saja
+                    // JANGAN gunakan AllLayers karena akan detect semua collider termasuk plasma drop
+                    enemyLayer = (1 << 0); // Layer Default saja untuk enemy spacing check
+                    Debug.LogWarning("[NavMeshPathFollower] Layer 'Enemy' not found. Using Default layer for spacing check.");
+                }
             }
         }
 
@@ -53,6 +66,42 @@ namespace MicroDefense.Enemies
         {
             targetDestination = destination;
             StartCoroutine(InitializeNavMeshWhenReady());
+        }
+
+        public void SetWaypoints(List<Transform> newWaypoints)
+        {
+            if (newWaypoints.Count > 0)
+            {
+                waypoints = new List<Transform>(newWaypoints);
+                currentWaypointIndex = 0;
+                targetDestination = waypoints[0];
+                StartCoroutine(InitializeNavMeshWhenReady());
+            }
+        }
+
+        private Transform GetCurrentTarget()
+        {
+            if (waypoints.Count > 0)
+            {
+                return waypoints[currentWaypointIndex];
+            }
+            return targetDestination;
+        }
+
+        private void AdvanceToNextWaypoint()
+        {
+            if (waypoints.Count == 0) return;
+            
+            currentWaypointIndex++;
+            if (currentWaypointIndex >= waypoints.Count)
+            {
+                // Reached final waypoint, head to final target
+                targetDestination = waypoints[waypoints.Count - 1];
+            }
+            else
+            {
+                targetDestination = waypoints[currentWaypointIndex];
+            }
         }
 
         private IEnumerator InitializeNavMeshWhenReady()
@@ -156,6 +205,13 @@ namespace MicroDefense.Enemies
                 return;
             }
 
+            // Cek apakah agent masih valid di NavMesh
+            if (!agent.isOnNavMesh)
+            {
+                useFallbackMovement = true;
+                return;
+            }
+
             // --- Prioritas 1: Sedang di-block oleh tower ---
             if (enemy.IsBlocked)
             {
@@ -166,21 +222,30 @@ namespace MicroDefense.Enemies
                     if (distToBlocker <= stopDistanceFromBlocker)
                     {
                         // Sudah cukup dekat → freeze total
-                        agent.isStopped = true;
-                        agent.velocity = Vector3.zero;
+                        if (agent.isOnNavMesh)
+                        {
+                            agent.isStopped = true;
+                            agent.velocity = Vector3.zero;
+                        }
                     }
                     else
                     {
                         // Masih jauh → jalan ke arah tower (agar tidak berhenti jauh)
-                        agent.isStopped = false;
-                        agent.SetDestination(currentBlocker.position);
+                        if (agent.isOnNavMesh)
+                        {
+                            agent.isStopped = false;
+                            agent.SetDestination(currentBlocker.position);
+                        }
                     }
                 }
                 else
                 {
                     // Tidak ada info blocker → freeze di tempat
-                    agent.isStopped = true;
-                    agent.velocity = Vector3.zero;
+                    if (agent.isOnNavMesh)
+                    {
+                        agent.isStopped = true;
+                        agent.velocity = Vector3.zero;
+                    }
                 }
                 return;
             }
@@ -188,20 +253,30 @@ namespace MicroDefense.Enemies
             // --- Prioritas 2: Spacing — ada enemy di depan, tunggu ---
             if (IsBlockedByEnemyAhead())
             {
-                agent.isStopped = true;
-                agent.velocity = Vector3.zero;
+                if (agent.isOnNavMesh)
+                {
+                    agent.isStopped = true;
+                    agent.velocity = Vector3.zero;
+                }
                 return;
             }
 
             // --- Jalan normal menuju tujuan akhir ---
-            agent.isStopped = false;
+            if (agent.isOnNavMesh)
+            {
+                agent.isStopped = false;
+            }
+
             if (targetDestination != null && (!hasNavTarget || (navTargetPosition - targetDestination.position).sqrMagnitude > 0.04f))
             {
+                Transform currentTarget = GetCurrentTarget();
+                if (currentTarget == null) currentTarget = targetDestination;
+                
                 NavMeshHit hit;
-                if (NavMesh.SamplePosition(targetDestination.position, out hit, 5f, NavMesh.AllAreas))
+                if (NavMesh.SamplePosition(currentTarget.position, out hit, 5f, NavMesh.AllAreas))
                 {
                     NavMeshPath path = new NavMeshPath();
-                    if (agent.CalculatePath(hit.position, path) && path.status == NavMeshPathStatus.PathComplete)
+                    if (agent.isOnNavMesh && agent.CalculatePath(hit.position, path) && path.status == NavMeshPathStatus.PathComplete)
                     {
                         navTargetPosition = hit.position;
                         hasNavTarget = true;
@@ -210,12 +285,26 @@ namespace MicroDefense.Enemies
                 }
             }
 
-            // Cek apakah sudah sampai tujuan
-            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.1f)
+            // Cek apakah sudah sampai waypoint saat ini
+            if (agent.isOnNavMesh && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.1f)
             {
                 if (agent.hasPath || agent.velocity.sqrMagnitude == 0f)
                 {
-                    enemy.OnReachedEndPath();
+                    // Only mark as reached if we're actually close to the target, not just blocked by other enemies
+                    float distToTarget = Vector3.Distance(transform.position, GetCurrentTarget().position);
+                    if (distToTarget > 1.5f) return; // Too far to be actual endpoint, just blocked by enemy
+                    
+                    // Jika ada waypoints dan belum sampai akhir, lanjut ke waypoint berikutnya
+                    if (waypoints.Count > 0 && currentWaypointIndex < waypoints.Count - 1)
+                    {
+                        AdvanceToNextWaypoint();
+                        hasNavTarget = false; // Force recalculate path ke waypoint berikutnya
+                    }
+                    else
+                    {
+                        // Sampai ke tujuan akhir
+                        enemy.OnReachedEndPath();
+                    }
                 }
             }
         }
@@ -257,8 +346,11 @@ namespace MicroDefense.Enemies
                 if (dist < 0.001f) continue;
 
                 float dot = Vector3.Dot(moveDir, toOther.normalized);
+                // Only block if enemy is directly in front (dot > 0.5) AND within minimum spacing
                 if (dot > 0.5f && dist < minimumSpacing)
+                {
                     return true;
+                }
             }
 
             return false;

@@ -24,6 +24,9 @@ namespace MicroDefense.Core
         [SerializeField] private List<Transform> waypoints = new List<Transform>();
         [SerializeField] private Transform spawnPoint;
 
+        [Header("Multi-Path System")]
+        [SerializeField] private List<SpawnPath> spawnPaths = new List<SpawnPath>();
+
         [Header("Runtime Status")]
         public int currentWaveIndex;
         public int activeEnemyCount;
@@ -48,7 +51,39 @@ namespace MicroDefense.Core
 
         private void Start()
         {
+            // Auto-populate waves from Resources if empty
+            if (waves.Count == 0)
+            {
+                LoadWavesFromResources();
+            }
             PublishWaveStatus();
+        }
+
+        private void LoadWavesFromResources()
+        {
+            // Load all WaveDataSO assets from Resources/Data/WaveData
+            WaveDataSO[] loadedWaves = Resources.LoadAll<WaveDataSO>("Data/WaveData");
+            
+            if (loadedWaves.Length == 0)
+            {
+                Debug.LogWarning("[WaveManager] No waves found in Resources/Data/WaveData");
+                return;
+            }
+
+            // Sort by name to ensure consistent order
+            System.Array.Sort(loadedWaves, (a, b) => a.name.CompareTo(b.name));
+            
+            waves.Clear();
+            foreach (var wave in loadedWaves)
+            {
+                if (wave != null)
+                {
+                    waves.Add(wave);
+                    Debug.Log($"[WaveManager] Loaded wave: {wave.name}");
+                }
+            }
+
+            Debug.Log($"[WaveManager] Auto-loaded {waves.Count} waves from Resources");
         }
 
         public void StartNextWave()
@@ -90,29 +125,43 @@ namespace MicroDefense.Core
 
         private IEnumerator SpawnWave(WaveDataSO waveData)
         {
-            if (waveData == null || waveData.spawnGroups == null) yield break;
+            if (waveData == null) yield break;
 
-            foreach (var group in waveData.spawnGroups)
+            if (waveData.pathSpawnGroups != null && waveData.pathSpawnGroups.Count > 0)
+            {
+                yield return StartCoroutine(SpawnWaveMultiPath(waveData));
+            }
+        }
+
+        private IEnumerator SpawnWaveMultiPath(WaveDataSO waveData)
+        {
+            foreach (var group in waveData.pathSpawnGroups)
             {
                 if (group.initialDelay > 0f)
                     yield return new WaitForSeconds(group.initialDelay);
 
                 for (int i = 0; i < group.count; i++)
                 {
-                    SpawnEnemy(group.enemyData);
+                    SpawnEnemyOnPath(group.enemyData, group.pathIndex);
                     if (group.spawnInterval > 0f)
                         yield return new WaitForSeconds(group.spawnInterval);
                 }
             }
         }
 
-        private void SpawnEnemy(EnemyDataSO enemyData)
+        private void SpawnEnemyOnPath(EnemyDataSO enemyData, int pathIndex)
         {
             if (enemyData == null || enemyData.enemyPrefab == null) return;
 
-            Vector3 position = spawnPoint != null
-                ? spawnPoint.position
-                : waypoints.Count > 0 ? waypoints[0].position : Vector3.zero;
+            // Validate path index
+            if (pathIndex < 0 || pathIndex >= spawnPaths.Count)
+            {
+                Debug.LogWarning($"[WaveManager] Invalid path index {pathIndex}. Total paths: {spawnPaths.Count}");
+                return;
+            }
+
+            SpawnPath path = spawnPaths[pathIndex];
+            Vector3 position = path.spawnPoint != null ? path.spawnPoint.position : Vector3.zero;
 
             GameObject enemyObject = Instantiate(enemyData.enemyPrefab, position, Quaternion.identity);
             EnemyBase enemy = enemyObject.GetComponent<EnemyBase>();
@@ -126,23 +175,44 @@ namespace MicroDefense.Core
             enemy.OnEnemyDied += HandleEnemyRemoved;
             activeEnemyCount++;
 
-            if (useNavMesh && targetCoreBase != null)
+            // Setup pathing with NavMesh
+            if (path.useNavMesh && path.targetPoint != null)
             {
                 NavMeshPathFollower follower = enemyObject.GetComponent<NavMeshPathFollower>();
                 if (follower != null)
-                    follower.InitializeNavMesh(targetCoreBase);
+                {
+                    if (path.waypoints.Count > 0)
+                    {
+                        // Use waypoints with NavMesh
+                        follower.SetWaypoints(path.waypoints);
+                    }
+                    else
+                    {
+                        // Direct NavMesh pathing to target
+                        follower.InitializeNavMesh(path.targetPoint);
+                    }
+                }
             }
+        }
+
+        private void SpawnEnemy(EnemyDataSO enemyData)
+        {
+            // This method is kept for emergency fallback only
+            Debug.LogError("[WaveManager] SpawnEnemy() called but multi-path system should be used. Ignoring.");
         }
 
         private void HandleEnemyRemoved()
         {
             activeEnemyCount = Mathf.Max(0, activeEnemyCount - 1);
+            Debug.Log($"[WaveManager] Enemy removed. activeEnemyCount: {activeEnemyCount}, isWaveSpawning: {isWaveSpawning}, completionTriggered: {completionTriggered}");
             TryCompleteWave();
         }
 
         private void TryCompleteWave()
         {
+            Debug.Log($"[WaveManager.TryCompleteWave] Check - completionTriggered: {completionTriggered}, isWaveSpawning: {isWaveSpawning}, activeEnemyCount: {activeEnemyCount}");
             if (completionTriggered || isWaveSpawning || activeEnemyCount > 0) return;
+            Debug.Log($"[WaveManager.TryCompleteWave] All conditions met, calling CompleteWave()");
             CompleteWave();
         }
 
@@ -150,15 +220,20 @@ namespace MicroDefense.Core
         {
             if (completionTriggered) return;
             completionTriggered = true;
+            
+            Debug.Log($"[WaveManager] Wave {currentWaveIndex + 1} completed!");
 
             if (currentWaveIndex < waves.Count && PlasmaManager.Instance != null)
                 PlasmaManager.Instance.AddPlasma(waves[currentWaveIndex].completionBonusPlasma);
 
             currentWaveIndex++;
             OnWaveCompleted?.Invoke();
+            
+            Debug.Log($"[WaveManager] currentWaveIndex incremented to {currentWaveIndex}, TotalWaves: {TotalWaves}");
 
             if (currentWaveIndex >= waves.Count)
             {
+                Debug.Log($"[WaveManager] All waves completed!");
                 OnAllWavesCompleted?.Invoke();
                 if (CompleteUIManager.Instance != null)
                     CompleteUIManager.Instance.ShowVictory();
@@ -170,12 +245,16 @@ namespace MicroDefense.Core
             PublishWaveStatus();
             if (GameManager.Instance != null)
                 GameManager.Instance.SetGameState(GameState.Preparation);
+            
+            Debug.Log($"[WaveManager] Starting delay before next wave (delayBetweenWaves: {delayBetweenWaves}s)");
             StartCoroutine(StartFollowingWave());
         }
 
         private IEnumerator StartFollowingWave()
         {
+            Debug.Log($"[WaveManager] Waiting {delayBetweenWaves} seconds before starting next wave...");
             yield return new WaitForSeconds(delayBetweenWaves);
+            Debug.Log($"[WaveManager] Delay finished, calling StartNextWave()");
             StartNextWave();
         }
 

@@ -21,6 +21,17 @@ namespace MicroDefense.Enemies
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
             dropCollider = GetComponent<Collider2D>();
+            
+            // Set layer ke TransparentFX (layer 1) agar tidak terdeteksi oleh enemy spacing check
+            // Layer ini tidak termasuk dalam enemyLayer mask di NavMeshPathFollower
+            gameObject.layer = 1; // Layer 1 = "TransparentFX"
+            
+            // Collider trigger diperlukan untuk OnMouseDown() bekerja
+            if (dropCollider != null)
+            {
+                dropCollider.isTrigger = true;
+            }
+            
             startPosition = transform.position;
             baseScale = transform.localScale;
         }

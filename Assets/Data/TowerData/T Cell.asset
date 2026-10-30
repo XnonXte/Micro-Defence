@@ -18,9 +18,10 @@ MonoBehaviour:
   baseCost: 60
   towerPrefab: {fileID: 2222918456178901736, guid: e74bace94dcd88e4ead0d32efdccc337, type: 3}
   icon: {fileID: 6483804897575239260, guid: d8abde803c536044994b0b3f3b5905ca, type: 3}
+  projectileSprite: {fileID: -2585858759159117228, guid: a463f619f7e70d0468e8d893a0ea720b, type: 3}
   projectileConfig:
     speed: 10
-    size: 15
+    size: 1
     color: {r: 0, g: 1, b: 0.9828807, a: 1}
     lifetime: 10
   tiers:

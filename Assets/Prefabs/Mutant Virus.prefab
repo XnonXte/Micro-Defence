@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ed22bc5d44d6ab4cb39b0983da8baeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Enemies.EnemyBase
-  enemyData: {fileID: 11400000, guid: e42ca930f26d5834cb90394ca88395ac, type: 2}
+  enemyData: {fileID: 11400000, guid: 9691950c6f8a33c4f93ff290661e852e, type: 2}
   currentHealth: 0
   currentSpeed: 0
   currentArmor: 0

@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1909550130635965888}
   - component: {fileID: 1909550130635965889}
   - component: {fileID: 9000000000000000012}
+  - component: {fileID: 9000000000000000013}
   m_Layer: 0
   m_Name: Swarm Virus
   m_TagString: Untagged
@@ -145,7 +146,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ed22bc5d44d6ab4cb39b0983da8baeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Enemies.EnemyBase
-  enemyData: {fileID: 11400000, guid: e42ca930f26d5834cb90394ca88395ac, type: 2}
+  enemyData: {fileID: 0}
   currentHealth: 0
   currentSpeed: 0
   currentArmor: 0
@@ -197,7 +198,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2133518467374252110}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: bf6a7b8c9d0e123456789abcdef01234, type: 2}
   m_CullingMode: 0
@@ -211,3 +212,20 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &9000000000000000013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133518467374252110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8b84d8ce4eeb34aa5b3f4eeb3d8be4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Enemies.SwarmVirus
+  enemyData: {fileID: 11400000, guid: 3e46d20898be3684486e7b4a729903e1, type: 2}
+  currentHealth: 0
+  currentSpeed: 0
+  currentArmor: 0
+  spriteRenderer: {fileID: 2327075766329445667}

@@ -94,6 +94,7 @@ namespace MicroDefense.Grid
 
             currentDraggingTower = towerData;
             CreateGhostPreview(towerData);
+            Debug.Log($"[PlacementGridManager.StartDragPlacement] Created ghost preview for {towerData.towerName}");
         }
 
         public void UpdateDragPlacement(Vector3 mouseWorldPos)
@@ -103,6 +104,14 @@ namespace MicroDefense.Grid
             if (EventSystem.current == null) return;
 
             Vector2 mousePos2D = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
+
+            // Hitung offset dari sprite bounds agar perfectly centered di cursor
+            Vector3 spriteOffset = Vector3.zero;
+            if (ghostSpriteRenderer != null && ghostSpriteRenderer.sprite != null)
+            {
+                Sprite sprite = ghostSpriteRenderer.sprite;
+                Debug.Log($"[UpdateDragPlacement] Mouse: ({mouseWorldPos.x:F2}, {mouseWorldPos.y:F2}), Sprite: {sprite.name}");
+            }
 
             // -------------------------------------------------------------
             // OPTION A: Tilemap System (Unity Tile Palette)
@@ -130,8 +139,8 @@ namespace MicroDefense.Grid
                 }
                 else
                 {
-                    // B-Cell & T-Cell: any noPath cell (pure noPath + overlap)
-                    isCompatible = isNoPath;
+                    // B-Cell & T-Cell: any cell that is not pure track (off-track, overlap, or any tile)
+                    isCompatible = !isPureTrack;
                 }
 
                 bool isFree = !occupiedTilemapCells.Contains(cellPos);
@@ -171,7 +180,7 @@ namespace MicroDefense.Grid
                 }
             }
 
-            // Default Invalid Hover State
+            // Default Invalid Hover State - tampilkan ghost di posisi cursor dengan warna merah
             currentTargetTile = null;
             isCurrentPlacementValid = false;
             ghostPreviewObj.transform.position = new Vector3(mouseWorldPos.x, mouseWorldPos.y, 0f);
@@ -282,10 +291,9 @@ namespace MicroDefense.Grid
             {
                 return tileType == TileType.OnTrackPath;
             }
-            else
-            {
-                return tileType == TileType.OffTrackSide;
-            }
+
+            // B-Cell & T-Cell: boleh di OffTrackSide maupun Any (tidak di jalur path murni)
+            return tileType == TileType.OffTrackSide;
         }
 
         #endregion
@@ -297,8 +305,11 @@ namespace MicroDefense.Grid
             DestroyGhostPreview();
 
             ghostPreviewObj = new GameObject($"GhostPreview_{towerData.towerName}");
+            ghostPreviewObj.layer = LayerMask.NameToLayer("Default");
+            
             ghostSpriteRenderer = ghostPreviewObj.AddComponent<SpriteRenderer>();
-            ghostSpriteRenderer.sortingOrder = 50;
+            ghostSpriteRenderer.sortingOrder = 100;
+            ghostSpriteRenderer.sortingLayerName = "Default";
 
             // PRIORITY: Get sprite dari prefab SpriteRenderer dulu
             Sprite towerSprite = null;
@@ -345,6 +356,9 @@ namespace MicroDefense.Grid
             {
                 ghostPreviewObj.transform.localScale = Vector3.one;
             }
+
+            // Position di world space dengan Z = 0
+            ghostPreviewObj.transform.position = Vector3.zero;
 
             SetGhostColor(new Color(0.2f, 1f, 0.2f, 0.7f));
         }

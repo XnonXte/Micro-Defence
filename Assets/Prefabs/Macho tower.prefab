@@ -120,6 +120,8 @@ MonoBehaviour:
     specialAbility: 0
     specialEffectMagnitude: 0
     specialEffectDuration: 0
+  rotateTowardTarget: 1
+  aimRotationOffset: 180
   currentHealth: 100
   maxHealth: 100
 --- !u!61 &-6290710062638861152
@@ -160,7 +162,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 9.52, y: 9.61}
+    oldSize: {x: 3.71875, y: 3.7539062}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

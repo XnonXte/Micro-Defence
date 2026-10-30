@@ -39,15 +39,26 @@
             [SerializeField] private Button[] towerUpgradeButtons = new Button[3];
             [SerializeField] private TMP_Text leaksLevelText;
 
+            [Header("Wave Announcement UI")]
+            [SerializeField] private GameObject waveAnnouncementPanel;
+            [SerializeField] private TMP_Text waveAnnouncementText;
+            [SerializeField] private float announcementDuration = 2.5f;
+
+            [Header("Wave Progress Bar")]
+            [SerializeField] private WaveProgressBar waveProgressBar;
+            [SerializeField] private TMP_Text waveNumberText; // Optional: show wave number alongside bar
+
             private TowerBase[] placedTowers = new TowerBase[3];
 
             private void OnEnable()
             {
+                Debug.Log("[TowerShopUI] OnEnable called");
                 SubscribeToManagers();
             }
 
             private void Start()
             {
+                Debug.Log("[TowerShopUI] Start called");
                 SetupButtonDragHandler(bCellButton, bCellData, "B-Cell");
                 SetupButtonDragHandler(macrophageButton, macrophageData, "Macrophage");
                 SetupButtonDragHandler(tCellButton, tCellData, "T-Cell");
@@ -62,8 +73,13 @@
                         towerUpgradeButtons[index].onClick.AddListener(() => UpgradeTower(index));
                 }
 
+                // Hide wave announcement panel at start
+                if (waveAnnouncementPanel != null)
+                    waveAnnouncementPanel.SetActive(false);
+
                 RefreshTowerCards();
                 SubscribeToManagers();
+                Debug.Log("[TowerShopUI] Start completed");
             }
 
             private void OnDisable()
@@ -85,6 +101,8 @@
                 {
                     WaveManager.Instance.OnWaveStatusChanged -= UpdateWave;
                     WaveManager.Instance.OnWaveStatusChanged += UpdateWave;
+                    WaveManager.Instance.OnWaveCompleted -= OnWaveTransition;
+                    WaveManager.Instance.OnWaveCompleted += OnWaveTransition;
                 }
 
                 if (LeakManager.Instance != null)
@@ -103,6 +121,14 @@
                 RefreshTowerCards();
             }
 
+            private void OnWaveTransition()
+            {
+                if (WaveManager.Instance != null && WaveManager.Instance.currentWaveIndex < WaveManager.Instance.TotalWaves)
+                {
+                    ShowWaveAnnouncement($"WAVE {WaveManager.Instance.currentWaveIndex + 1}");
+                }
+            }
+
             private void RefreshHud()
             {
                 if (WaveManager.Instance != null)
@@ -115,7 +141,14 @@
 
             private void UpdateWave(int current, int total)
             {
-                if (waveText != null) waveText.text = $"WAVE {Mathf.Clamp(current, 1, Mathf.Max(1, total))} / {Mathf.Max(1, total)}";
+                // Update wave progress bar (replaces old number text)
+                if (waveProgressBar != null)
+                    waveProgressBar.SetWave(current, total);
+
+                // Optional: update wave number text if assigned
+                if (waveNumberText != null)
+                    waveNumberText.text = $"WAVE {Mathf.Clamp(current, 1, Mathf.Max(1, total))} / {Mathf.Max(1, total)}";
+
                 if (waveStatusText != null)
                     waveStatusText.text = WaveManager.Instance != null && WaveManager.Instance.isWaveSpawning ? "INCOMING ENEMIES" : "READY TO DEPLOY";
             }
@@ -194,18 +227,56 @@
 
             private void SetupButtonDragHandler(Button btn, TowerDataSO data, string towerName)
             {
-                if (btn == null) return;
+                if (btn == null)
+                {
+                    Debug.LogError($"[TowerShopUI] Button for {towerName} is NULL!");
+                    return;
+                }
+
+                Debug.Log($"[TowerShopUI] Setting up drag handler for {towerName}. Button: {btn.gameObject.name}");
 
                 TowerDragHandler dragHandler = btn.GetComponent<TowerDragHandler>();
                 if (dragHandler == null)
+                {
                     dragHandler = btn.gameObject.AddComponent<TowerDragHandler>();
+                    Debug.Log($"[TowerShopUI] Added TowerDragHandler to {towerName} button");
+                }
+                else
+                {
+                    Debug.Log($"[TowerShopUI] TowerDragHandler already exists on {towerName} button");
+                }
 
                 dragHandler.SetTowerData(data);
+                Debug.Log($"[TowerShopUI] TowerDragHandler configured with {data.towerName}");
             }
 
             private void OnStartWaveClicked()
             {
-                WaveManager.Instance?.StartNextWave();
+                if (WaveManager.Instance != null)
+                {
+                    ShowWaveAnnouncement($"WAVE {WaveManager.Instance.currentWaveIndex + 1}");
+                    WaveManager.Instance.StartNextWave();
+                }
+            }
+
+            private void ShowWaveAnnouncement(string text)
+            {
+                if (waveAnnouncementPanel == null || waveAnnouncementText == null)
+                {
+                    Debug.LogWarning("[TowerShopUI] Wave announcement panel or text is not assigned!");
+                    return;
+                }
+
+                waveAnnouncementText.text = text;
+                waveAnnouncementPanel.SetActive(true);
+                CancelInvoke(nameof(HideWaveAnnouncement));
+                Invoke(nameof(HideWaveAnnouncement), announcementDuration);
+            }
+
+            private void HideWaveAnnouncement()
+            {
+                if (waveAnnouncementPanel != null)
+                    waveAnnouncementPanel.SetActive(false);
             }
         }
     }

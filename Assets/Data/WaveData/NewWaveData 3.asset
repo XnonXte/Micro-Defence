@@ -17,6 +17,6 @@ MonoBehaviour:
   spawnGroups:
   - enemyData: {fileID: 11400000, guid: 3e46d20898be3684486e7b4a729903e1, type: 2}
     count: 10
-    spawnInterval: 4
-    initialDelay: 4
+    spawnInterval: 1
+    initialDelay: 1
   completionBonusPlasma: 50

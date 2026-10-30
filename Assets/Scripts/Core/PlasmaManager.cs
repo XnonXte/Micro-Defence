@@ -61,10 +61,14 @@ namespace MicroDefense.Core
             GameObject drop = new GameObject("PlasmaDrop");
             drop.transform.position = position;
             drop.transform.localScale = Vector3.one * Mathf.Max(0.01f, dropScale);
+            
+            // Set layer ke TransparentFX (layer 1) - layer ini tidak digunakan untuk enemy detection
+            // Enemy spacing check hanya melihat layer "Enemy", jadi plasma drop tidak akan terdeteksi
+            drop.layer = 1; // Layer 1 = "TransparentFX"
 
             SpriteRenderer renderer = drop.AddComponent<SpriteRenderer>();
             renderer.sprite = Resources.Load<Sprite>("plasma");
-            renderer.sortingOrder = 20;
+            renderer.sortingOrder = 5; // Render di bawah enemy (enemy biasanya 10+)
 
             if (renderer.sprite == null)
             {
@@ -73,9 +77,11 @@ namespace MicroDefense.Core
                 return;
             }
 
+            // Tambahkan collider sebagai trigger agar OnMouseDown() bisa bekerja
+            // Layer TransparentFX membuat ini tidak terdeteksi oleh enemy spacing check
             CircleCollider2D collider = drop.AddComponent<CircleCollider2D>();
             collider.radius = 0.5f;
-            collider.isTrigger = false;
+            collider.isTrigger = true;
 
             var pickup = drop.AddComponent<PlasmaDrop>();
             var valueField = typeof(PlasmaDrop).GetField("value", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);

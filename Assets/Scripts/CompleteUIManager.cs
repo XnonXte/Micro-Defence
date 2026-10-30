@@ -1,4 +1,5 @@
 using MicroDefense.Core;
+using MicroDefense.UI;
 using UnityEngine;
 
 public sealed class CompleteUIManager : MonoBehaviour
@@ -30,7 +31,8 @@ public sealed class CompleteUIManager : MonoBehaviour
             return;
         }
         instance = this;
-        DontDestroyOnLoad(gameObject);
+        // TIDAK pakai DontDestroyOnLoad agar retry bisa clean restart
+        // DontDestroyOnLoad(gameObject); ← DIHAPUS!
     }
 
     public void ShowWaveAnnouncement(string text)
@@ -40,11 +42,27 @@ public sealed class CompleteUIManager : MonoBehaviour
 
     public void ShowVictory()
     {
-        SimpleUI.Instance.ShowResult("VICTORY!", "All waves completed", true);
+        // Try to use GameOverUI first, fallback to SimpleUI
+        if (GameOverUI.Instance != null)
+        {
+            GameOverUI.Instance.ShowWinPanel("All waves completed!");
+        }
+        else if (SimpleUI.Instance != null)
+        {
+            SimpleUI.Instance.ShowResult("VICTORY!", "All waves completed", true);
+        }
     }
 
     public void ShowDefeat()
     {
-        SimpleUI.Instance.ShowResult("DEFEAT", "Base destroyed", false);
+        // Try to use GameOverUI first, fallback to SimpleUI
+        if (GameOverUI.Instance != null)
+        {
+            GameOverUI.Instance.ShowLosePanel("Base destroyed!");
+        }
+        else if (SimpleUI.Instance != null)
+        {
+            SimpleUI.Instance.ShowResult("DEFEAT", "Base destroyed", false);
+        }
     }
 }

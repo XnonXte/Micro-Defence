@@ -55,6 +55,7 @@ namespace MicroDefense.Data
         public int baseCost;             // Cost to place Tier 1 tower
         public GameObject towerPrefab;
         public Sprite icon;
+        public Sprite projectileSprite;
 
         [Header("Projectile Config")]
         [SerializeField] private ProjectileConfig projectileConfig = new ProjectileConfig

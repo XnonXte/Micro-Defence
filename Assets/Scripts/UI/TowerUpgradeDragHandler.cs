@@ -6,6 +6,9 @@ using UnityEngine.EventSystems;
 
 namespace MicroDefense.UI
 {
+    /// <summary>
+    /// Upgrade tool drag handler - follows cursor exactly during drag
+    /// </summary>
     public class TowerUpgradeDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [SerializeField] private float targetRadius = 2.5f;
@@ -18,6 +21,8 @@ namespace MicroDefense.UI
         private GameObject gridIndicator;
         private SpriteRenderer gridIndicatorRenderer;
         private RectTransform rectTransform;
+        
+        // Store original UI state untuk restore
         private Vector2 defaultAnchoredPosition;
         private Vector2 defaultSizeDelta;
         private Vector2 defaultAnchorMin;
@@ -26,12 +31,14 @@ namespace MicroDefense.UI
         private Vector3 defaultLocalScale;
         private Quaternion defaultLocalRotation;
         private Transform defaultParent;
+        private Canvas defaultCanvas;
 
         private void Awake()
         {
             rectTransform = GetComponent<RectTransform>();
             if (backgroundImage == null)
                 backgroundImage = transform.Find("Background")?.GetComponent<Image>();
+            
             if (rectTransform != null)
             {
                 defaultAnchoredPosition = rectTransform.anchoredPosition;
@@ -42,18 +49,27 @@ namespace MicroDefense.UI
                 defaultLocalScale = rectTransform.localScale;
                 defaultLocalRotation = rectTransform.localRotation;
                 defaultParent = rectTransform.parent;
+                defaultCanvas = rectTransform.GetComponentInParent<Canvas>();
             }
         }
 
         public void OnBeginDrag(PointerEventData eventData)
         {
             isDragging = true;
+            
             if (backgroundImage != null && draggingBackground != null)
                 backgroundImage.sprite = draggingBackground;
+            
             CreateIndicator();
             UpdateIndicator(eventData);
+            
+            // Pindahkan ke overlay canvas agar bisa follow cursor di world space
             if (rectTransform != null)
-                rectTransform.SetParent(rectTransform.root, true);
+            {
+                Canvas overlayCanvas = GetOrCreateOverlayCanvas();
+                rectTransform.SetParent(overlayCanvas.transform, false);
+                rectTransform.SetAsLastSibling();
+            }
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -62,14 +78,23 @@ namespace MicroDefense.UI
                 return;
 
             UpdateIndicator(eventData);
-
-            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(
-                    rectTransform.parent as RectTransform,
-                    eventData.position,
-                    eventData.pressEventCamera,
-                    out Vector3 worldPosition))
+            
+            // Update posisi tool untuk follow cursor di screen space
+            Vector3 screenPos = eventData.position;
+            
+            // Konversi screen position ke UI canvas position
+            if (rectTransform.parent != null && rectTransform.parent.GetComponent<Canvas>() != null)
             {
-                rectTransform.position = worldPosition;
+                Canvas canvas = rectTransform.parent.GetComponent<Canvas>();
+                if (canvas.renderMode == RenderMode.ScreenSpaceOverlay)
+                {
+                    // Direct screen space positioning
+                    rectTransform.position = screenPos;
+                }
+                else if (canvas.renderMode == RenderMode.ScreenSpaceCamera)
+                {
+                    rectTransform.position = screenPos;
+                }
             }
         }
 
@@ -79,15 +104,31 @@ namespace MicroDefense.UI
                 return;
 
             isDragging = false;
-            Vector3 worldPosition = GetWorldPosition(eventData);
+            Vector3 worldPosition = GetMouseWorldPosition(eventData);
             TowerBase target = FindTowerAt(worldPosition);
+            
             if (target != null)
                 target.TryUpgrade();
 
             DestroyIndicator();
             ResetPosition();
+            
             if (backgroundImage != null && idleBackground != null)
                 backgroundImage.sprite = idleBackground;
+        }
+
+        private Canvas GetOrCreateOverlayCanvas()
+        {
+            // Cari atau buat overlay canvas
+            Canvas[] canvases = FindObjectsByType<Canvas>();
+            foreach (Canvas c in canvases)
+            {
+                if (c.renderMode == RenderMode.ScreenSpaceOverlay)
+                    return c;
+            }
+            
+            // Jika tidak ada, gunakan parent canvas
+            return defaultCanvas;
         }
 
         private void CreateIndicator()
@@ -107,7 +148,7 @@ namespace MicroDefense.UI
             if (gridIndicator == null)
                 return;
 
-            Vector3 worldPosition = GetWorldPosition(eventData);
+            Vector3 worldPosition = GetMouseWorldPosition(eventData);
             worldPosition.x = Mathf.Round(worldPosition.x);
             worldPosition.y = Mathf.Round(worldPosition.y);
             worldPosition.z = 0f;
@@ -116,6 +157,7 @@ namespace MicroDefense.UI
             TowerBase target = FindTowerAt(worldPosition);
             bool hasEnoughPlasma = target != null && target.CanUpgrade(out int cost) &&
                 PlasmaManager.Instance != null && PlasmaManager.Instance.CanAfford(cost);
+            
             gridIndicatorRenderer.color = hasEnoughPlasma
                 ? new Color(0.2f, 1f, 0.2f, 0.65f)
                 : new Color(1f, 0.15f, 0.15f, 0.65f);
@@ -177,14 +219,14 @@ namespace MicroDefense.UI
             return closest;
         }
 
-        private Vector3 GetWorldPosition(PointerEventData eventData)
+        private Vector3 GetMouseWorldPosition(PointerEventData eventData)
         {
             Camera camera = Camera.main;
             if (camera == null)
                 return Vector3.zero;
 
             Vector3 screenPosition = eventData.position;
-            Vector3 worldPosition = camera.ScreenToWorldPoint(screenPosition);
+            Vector3 worldPosition = camera.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 0f));
             worldPosition.z = 0f;
             return worldPosition;
         }

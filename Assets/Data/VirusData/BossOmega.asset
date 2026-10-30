@@ -14,15 +14,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Data.EnemyDataSO
   enemyType: 5
   enemyName: 
-  enemyPrefab: {fileID: 0}
+  enemyPrefab: {fileID: 2133518467374252110, guid: b610ee13ca602eb48b2f8f8352e91dd7, type: 3}
   baseHealth: 100
   moveSpeed: 2
   flatArmor: 0
   damageToCell: 15
   plasmaReward: 10
+  swarmLives: 3
+  swarmHealthPerLife: 100
+  swarmSpriteLife1: {fileID: 0}
+  swarmSpriteLife2: {fileID: 0}
+  swarmSpriteLife3: {fileID: 0}
   isSplitter: 0
   splitChildData: {fileID: 0}
   splitCount: 3
-  isBoss: 0
+  isBoss: 1
   replicationInterval: 8
   replicationMinionPool: []

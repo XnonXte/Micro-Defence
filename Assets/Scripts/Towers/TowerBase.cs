@@ -41,11 +41,10 @@ namespace MicroDefense.Towers
         {
             currentTierLevel = tierLevel;
             currentTierStats = towerData.GetTier(tierLevel);
-            
-            // Safety check: if range is 0, set default
+
             if (currentTierStats.range <= 0)
                 currentTierStats.range = 5f;
-            
+
             OnTierUpgraded?.Invoke(currentTierLevel);
         }
 
@@ -131,10 +130,6 @@ namespace MicroDefense.Towers
             return result;
         }
 
-        /// <summary>
-        /// Spawn projectile yang menuju ke target enemy
-        /// ADJUSTABLE: Damage dari currentTierStats.damage
-        /// </summary>
         protected void SpawnProjectile(EnemyBase target)
         {
             SpawnProjectile(target, false, currentTierStats.damage);
@@ -148,45 +143,48 @@ namespace MicroDefense.Towers
             projectileObj.transform.position = transform.position;
             projectileObj.layer = gameObject.layer;
 
-            // Add sprite renderer
             SpriteRenderer sr = projectileObj.AddComponent<SpriteRenderer>();
             sr.sortingOrder = 5;
 
-            // Create simple circle projectile (cyan untuk B-Cell)
-            Texture2D tex = new Texture2D(16, 16, TextureFormat.RGBA32, false);
-            Color[] pixels = new Color[256];
-            Vector2 center = Vector2.one * 8;
-
-            for (int i = 0; i < 256; i++)
+            Sprite projectileSprite = towerData.projectileSprite;
+            if (projectileSprite != null)
             {
-                int y = i / 16;
-                int x = i % 16;
-                pixels[i] = Vector2.Distance(new Vector2(x, y), center) <= 7 ? Color.cyan : new Color(0, 0, 0, 0);
+                sr.sprite = projectileSprite;
+                sr.color = Color.white;
+            }
+            else
+            {
+                Texture2D tex = new Texture2D(16, 16, TextureFormat.RGBA32, false);
+                Color[] pixels = new Color[256];
+                Vector2 center = Vector2.one * 8;
+
+                for (int i = 0; i < 256; i++)
+                {
+                    int y = i / 16;
+                    int x = i % 16;
+                    pixels[i] = Vector2.Distance(new Vector2(x, y), center) <= 7 ? Color.cyan : new Color(0, 0, 0, 0);
+                }
+
+                tex.SetPixels(pixels);
+                tex.Apply();
+
+                Sprite sprite = Sprite.Create(tex, new Rect(0, 0, 16, 16), Vector2.one * 0.5f, 100);
+                sr.sprite = sprite;
             }
 
-            tex.SetPixels(pixels);
-            tex.Apply();
-
-            Sprite sprite = Sprite.Create(tex, new Rect(0, 0, 16, 16), Vector2.one * 0.5f, 100);
-            sr.sprite = sprite;
-
-            // Add collider
             CircleCollider2D collider = projectileObj.AddComponent<CircleCollider2D>();
             collider.radius = 0.25f;
             collider.isTrigger = true;
 
-            // Add projectile script
             Projectile projectile = projectileObj.AddComponent<Projectile>();
-            
+
             if (damage <= 0)
             {
-                damage = 10f; // Fallback default
+                damage = 10f;
                 Debug.LogWarning($"[TowerBase] Damage is 0 or less in {towerData.towerName} Tier {currentTierLevel}! Using fallback: {damage}");
             }
 
             projectile.SetTarget(target, damage, towerData.ProjectileConfig, isTrueDamage);
-            
-            Debug.Log($"[TowerBase] Projectile spawned with damage: {damage} to target: {target.name}");
         }
     }
 }

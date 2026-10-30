@@ -9,7 +9,7 @@ public sealed class SimpleUI : MonoBehaviour
 
     [SerializeField] private int totalWavesFallback = 5;
     [SerializeField] private int fontSize = 36;
-    [SerializeField] private bool buildRuntimeHud = false;
+    [SerializeField] private bool buildRuntimeHud = true;
 
     private Text waveText;
     private Text plasmaText;
@@ -34,8 +34,18 @@ public sealed class SimpleUI : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        // TIDAK pakai DontDestroyOnLoad agar retry bisa clean restart
+        // DontDestroyOnLoad(gameObject); ← DIHAPUS!
         runtimeFont = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        
+        // Only build UI on game scenes, not on MainMenu
+        string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        if (currentScene == "MainMenu")
+        {
+            enabled = false;
+            return;
+        }
+        
         if (buildRuntimeHud)
             BuildUI();
     }
