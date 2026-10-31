@@ -1,3 +1,4 @@
+using MicroDefense.Core;
 using MicroDefense.Data;
 using MicroDefense.Grid;
 using UnityEngine;
@@ -8,7 +9,7 @@ namespace MicroDefense.UI
     /// <summary>
     /// Tower placement drag handler - creates ghost preview that follows cursor exactly
     /// </summary>
-    public class TowerDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerDownHandler
+    public class TowerDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerDownHandler, IPointerEnterHandler
     {
         [Header("Tower Data")]
         [SerializeField] private TowerDataSO towerData;
@@ -18,8 +19,23 @@ namespace MicroDefense.UI
             towerData = data;
         }
 
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            // Play card hover SFX
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayCardHover();
+            }
+        }
+
         public void OnPointerDown(PointerEventData eventData)
         {
+            // Play card click SFX
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayCardClick();
+            }
+            
             Debug.Log($"[TowerDragHandler] OnPointerDown on {gameObject.name}");
         }
 

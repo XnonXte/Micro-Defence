@@ -86,9 +86,9 @@ MonoBehaviour:
     m_Bits: 256
   ghostPreviewScale: 1
   ghostPreviewAlpha: 0.7
-  bCellGhostSprite: {fileID: 8907483544199537890, guid: 598b992db6585e547a434fa9ef411b55, type: 3}
-  tCellGhostSprite: {fileID: -4862429781060820726, guid: 40d89635798235e4cbc9c4c34174e370, type: 3}
-  macrophageGhostSprite: {fileID: 4395833850673153464, guid: c13640326a0daa145872002fd6affaca, type: 3}
+  bCellGhostSprite: {fileID: 2865840820759925553, guid: b1fd23b5c83d38b4984d5b15a963b818, type: 3}
+  tCellGhostSprite: {fileID: 1596214653249343203, guid: f5fa4927b49ca104993f57040e9afd88, type: 3}
+  macrophageGhostSprite: {fileID: 1868398073708036725, guid: 1959fe48bc91eba428fe9f6b6650477c, type: 3}
 --- !u!114 &472028865559009106
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,11 +122,6 @@ MonoBehaviour:
     - {fileID: 0}
     - {fileID: 0}
     - {fileID: 0}
-    useNavMesh: 1
-  - pathName: 1
-    spawnPoint: {fileID: 0}
-    targetPoint: {fileID: 0}
-    waypoints: []
     useNavMesh: 1
   currentWaveIndex: 0
   activeEnemyCount: 0
@@ -220,9 +215,9 @@ MonoBehaviour:
   bgmAudioSource: {fileID: 0}
   sfxAudioSource: {fileID: 0}
   audioMixer: {fileID: 0}
-  mainMenuBGM: {fileID: 0}
-  level1To5BGM: {fileID: 0}
-  level6To10BGM: {fileID: 0}
+  mainMenuBGM: {fileID: 8300000, guid: 1c9ac7610ffcec14db04449308be474a, type: 3}
+  level1To5BGM: {fileID: 8300000, guid: ce9a641c090832943880d36eaf24d957, type: 3}
+  level6To10BGM: {fileID: 8300000, guid: c0e6cdfa999c38d4982aef36c875678c, type: 3}
   turretPlaced: {fileID: 8300000, guid: db0ff25a00ddb06468d07855c7f460c5, type: 3}
   turretUpgraded: {fileID: 8300000, guid: 6bd80ab2a1a2e644199d4cfb4ecc2cbe, type: 3}
   tCellShooting: {fileID: 8300000, guid: e7b21ae449d51ab458c9b64a070d9baf, type: 3}

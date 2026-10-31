@@ -9,6 +9,12 @@ namespace MicroDefense.UI
 
         public void TogglePause()
         {
+            // Play button click SFX
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayButtonClick();
+            }
+
             if (GameManager.Instance != null)
             {
                 if (GameManager.Instance.CurrentState == GameState.Paused)
@@ -28,6 +34,12 @@ namespace MicroDefense.UI
 
         public void Resume()
         {
+            // Play button click SFX
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayButtonClick();
+            }
+
             if (GameManager.Instance != null)
             {
                 Time.timeScale = 1f;

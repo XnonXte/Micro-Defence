@@ -57,6 +57,12 @@ namespace MicroDefense.UI
         {
             isDragging = true;
             
+            // Play pipet picked SFX
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayPipetPicked();
+            }
+            
             if (backgroundImage != null && draggingBackground != null)
                 backgroundImage.sprite = draggingBackground;
             
@@ -113,6 +119,12 @@ namespace MicroDefense.UI
             
             if (target != null)
                 target.TryUpgrade();
+
+            // Play pipet unpicked SFX
+            if (AudioManager.Instance != null)
+            {
+                AudioManager.Instance.PlayPipetUnpicked();
+            }
 
             HideAllTowerUpgradeInfo();
             DestroyIndicator();

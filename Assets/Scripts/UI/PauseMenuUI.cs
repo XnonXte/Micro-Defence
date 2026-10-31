@@ -1,4 +1,7 @@
 using MicroDefense.Core;
+using MicroDefense.Grid;
+using MicroDefense.Towers;
+using MicroDefense.Enemies;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -89,10 +92,52 @@ namespace MicroDefense.UI
                 Destroy(SimpleUI.Instance.gameObject);
             }
             
-            // 3. Destroy semua tower yang ada di scene
+            // 3. Destroy AudioManager (DontDestroyOnLoad)
+            if (AudioManager.Instance != null)
+            {
+                Debug.Log("[PauseMenuUI] Destroying AudioManager");
+                Destroy(AudioManager.Instance.gameObject);
+            }
+            
+            // 4. Destroy GameManager (jika ada)
+            if (GameManager.Instance != null)
+            {
+                Debug.Log("[PauseMenuUI] Destroying GameManager");
+                Destroy(GameManager.Instance.gameObject);
+            }
+            
+            // 5. Destroy WaveManager
+            if (WaveManager.Instance != null)
+            {
+                Debug.Log("[PauseMenuUI] Destroying WaveManager");
+                Destroy(WaveManager.Instance.gameObject);
+            }
+            
+            // 6. Destroy PlasmaManager
+            if (PlasmaManager.Instance != null)
+            {
+                Debug.Log("[PauseMenuUI] Destroying PlasmaManager");
+                Destroy(PlasmaManager.Instance.gameObject);
+            }
+            
+            // 7. Destroy LeakManager
+            if (LeakManager.Instance != null)
+            {
+                Debug.Log("[PauseMenuUI] Destroying LeakManager");
+                Destroy(LeakManager.Instance.gameObject);
+            }
+            
+            // 8. Destroy PlacementGridManager
+            if (PlacementGridManager.Instance != null)
+            {
+                Debug.Log("[PauseMenuUI] Destroying PlacementGridManager");
+                Destroy(PlacementGridManager.Instance.gameObject);
+            }
+            
+            // 9. Destroy semua tower yang ada di scene
             DestroyAllTowers();
             
-            // 4. Destroy semua enemy yang masih ada
+            // 10. Destroy semua enemy yang masih ada
             DestroyAllEnemies();
         }
         
@@ -124,7 +169,12 @@ namespace MicroDefense.UI
 
         private void OnExitClicked()
         {
-            // Unpause sebelum exit
+            Debug.Log("[PauseMenuUI] Exit button clicked - Going to main menu...");
+            
+            // PENTING: Destroy semua GameObject persistent sebelum ke main menu
+            DestroyAllPersistentObjects();
+            
+            // Resume time sebelum load scene
             Time.timeScale = 1f;
             
             // Load main menu
