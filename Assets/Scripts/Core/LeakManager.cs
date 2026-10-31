@@ -62,6 +62,8 @@ namespace MicroDefense.Core
             OnLeakChanged?.Invoke(currentLeakCount, maxLeakCapacity);
             OnHealthChanged?.Invoke(currentLeakCount, maxLeakCapacity); // Backward compatibility
 
+            AudioManager.Instance?.PlayEnemyLolos();
+
             Debug.Log($"[LeakManager] Enemy reached target! Leaks: {currentLeakCount}/{maxLeakCapacity}");
 
             // Kalah saat leak mencapai kapasitas maksimal
@@ -76,6 +78,9 @@ namespace MicroDefense.Core
             if (defeatTriggered) return;
             defeatTriggered = true;
             Debug.Log("[LeakManager] Leak capacity reached! Player defeated!");
+            
+            AudioManager.Instance?.PlayGameOver();
+
             OnDefeat?.Invoke();
             
             if (CompleteUIManager.Instance != null)

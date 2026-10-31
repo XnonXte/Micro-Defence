@@ -42,6 +42,9 @@ public sealed class CompleteUIManager : MonoBehaviour
 
     public void ShowVictory()
     {
+        // Freeze game
+        Time.timeScale = 0f;
+        
         // Try to use GameOverUI first, fallback to SimpleUI
         if (GameOverUI.Instance != null)
         {
@@ -55,6 +58,9 @@ public sealed class CompleteUIManager : MonoBehaviour
 
     public void ShowDefeat()
     {
+        // Freeze game
+        Time.timeScale = 0f;
+        
         // Try to use GameOverUI first, fallback to SimpleUI
         if (GameOverUI.Instance != null)
         {

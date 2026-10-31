@@ -82,6 +82,9 @@ namespace MicroDefense.UI
             // Update posisi tool untuk follow cursor di screen space
             Vector3 screenPos = eventData.position;
             
+            // Naikin Y offset dari cursor user
+            screenPos.y += 170f;
+            
             // Konversi screen position ke UI canvas position
             if (rectTransform.parent != null && rectTransform.parent.GetComponent<Canvas>() != null)
             {
@@ -154,9 +157,6 @@ namespace MicroDefense.UI
             worldPosition.x = Mathf.Round(worldPosition.x);
             worldPosition.y = Mathf.Round(worldPosition.y);
             worldPosition.z = 0f;
-            
-            // Naikin Y offset dari cursor
-            worldPosition.y += 1f;
             
             gridIndicator.transform.position = worldPosition;
 

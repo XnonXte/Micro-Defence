@@ -1,4 +1,7 @@
 using System;
+using MicroDefense.Enemies;
+using MicroDefense.Grid;
+using MicroDefense.Towers;
 using UnityEngine;
 
 namespace MicroDefense.Core
@@ -18,6 +21,7 @@ namespace MicroDefense.Core
         public static GameManager Instance { get; private set; }
 
         public GameState CurrentState { get; private set; } = GameState.MainMenu;
+        private GameState previousState = GameState.Preparation;
 
         public event Action<GameState> OnGameStateChanged;
 
@@ -40,8 +44,22 @@ namespace MicroDefense.Core
         {
             if (CurrentState == newState) return;
 
+            if (CurrentState != GameState.Paused && newState == GameState.Paused)
+            {
+                previousState = CurrentState;
+            }
+
             CurrentState = newState;
-            Time.timeScale = (newState == GameState.Paused) ? 0f : 1f;
+            
+            // Standar Unity Pause: Cukup atur timeScale = 0 saat Paused/Defeat/Victory, = 1 saat main
+            if (newState == GameState.Defeat || newState == GameState.Victory || newState == GameState.Paused)
+            {
+                Time.timeScale = 0f;
+            }
+            else
+            {
+                Time.timeScale = 1f;
+            }
 
             OnGameStateChanged?.Invoke(newState);
         }
@@ -58,7 +76,8 @@ namespace MicroDefense.Core
         {
             if (CurrentState == GameState.Paused)
             {
-                SetGameState(GameState.Preparation);
+                // Kembalikan ke state sebelum pause (WaveInProgress atau Preparation)
+                SetGameState(previousState);
             }
         }
     }

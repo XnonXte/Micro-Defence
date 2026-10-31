@@ -117,11 +117,13 @@ namespace MicroDefense.Core
             if (GameManager.Instance != null)
                 GameManager.Instance.SetGameState(GameState.WaveInProgress);
 
+            AudioManager.Instance?.PlayIncomingWave();
+
             if (CompleteUIManager.Instance != null)
                 CompleteUIManager.Instance.ShowWaveAnnouncement($"WAVE {currentWaveIndex + 1}");
 
             PublishWaveStatus();
-            yield return new WaitForSeconds(waveAnnouncementDuration);
+            yield return new WaitForSecondsRealtime(waveAnnouncementDuration);
             yield return StartCoroutine(SpawnWave(waveData));
 
             isWaveSpawning = false;
@@ -143,13 +145,13 @@ namespace MicroDefense.Core
             foreach (var group in waveData.pathSpawnGroups)
             {
                 if (group.initialDelay > 0f)
-                    yield return new WaitForSeconds(group.initialDelay);
+                    yield return new WaitForSecondsRealtime(group.initialDelay);
 
                 for (int i = 0; i < group.count; i++)
                 {
                     SpawnEnemyOnPath(group.enemyData, group.pathIndex);
                     if (group.spawnInterval > 0f)
-                        yield return new WaitForSeconds(group.spawnInterval);
+                        yield return new WaitForSecondsRealtime(group.spawnInterval);
                 }
             }
         }
@@ -258,7 +260,7 @@ namespace MicroDefense.Core
         private IEnumerator StartFollowingWave()
         {
             Debug.Log($"[WaveManager] Waiting {delayBetweenWaves} seconds before starting next wave...");
-            yield return new WaitForSeconds(delayBetweenWaves);
+            yield return new WaitForSecondsRealtime(delayBetweenWaves);
             Debug.Log($"[WaveManager] Delay finished, calling StartNextWave()");
             StartNextWave();
         }

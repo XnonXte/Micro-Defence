@@ -1,3 +1,4 @@
+using MicroDefense.Core;
 using MicroDefense.Data;
 using MicroDefense.Enemies;
 using UnityEngine;
@@ -64,6 +65,9 @@ namespace MicroDefense.Towers
                 animator.SetBool(IsAttackingHash, true);
                 attackAnimTimer = attackAnimDuration;
             }
+
+            // Play B-Cell shooting SFX
+            AudioManager.Instance?.PlayBCellShooting();
 
             // Use base class SpawnProjectile (ADJUSTABLE damage)
             SpawnProjectile(target);

@@ -123,6 +123,7 @@ namespace MicroDefense.Grid
 
             currentDraggingTower = towerData;
             CreateGhostPreview(towerData);
+            AudioManager.Instance?.PlayPipetPicked();
             Debug.Log($"[PlacementGridManager.StartDragPlacement] Created ghost preview for {towerData.towerName}");
         }
 
@@ -250,6 +251,10 @@ namespace MicroDefense.Grid
         public void CancelDragPlacement()
         {
             DestroyGhostPreview();
+            if (currentDraggingTower != null)
+            {
+                AudioManager.Instance?.PlayPipetUnpicked();
+            }
             currentDraggingTower = null;
             currentTargetTile = null;
         }
@@ -258,6 +263,15 @@ namespace MicroDefense.Grid
 
         #region Tower Placement Core
 
+        public void RemoveOccupiedCell(Vector3Int cellPos)
+        {
+            if (occupiedTilemapCells.Contains(cellPos))
+            {
+                occupiedTilemapCells.Remove(cellPos);
+                Debug.Log($"[PlacementGridManager] Removed occupied cell: {cellPos}");
+            }
+        }
+
         private void PlaceTowerOnTilemapCell(Vector3Int cellPos, Vector3 spawnPos, TowerDataSO towerData)
         {
             if (!TryPayTowerCost(towerData))
@@ -265,6 +279,7 @@ namespace MicroDefense.Grid
 
             GameObject spawned = SpawnTowerInstance(towerData, spawnPos);
             occupiedTilemapCells.Add(cellPos);
+            AudioManager.Instance?.PlayTurretPlaced();
         }
 
         private void PlaceTowerOnGridTile(GridTile tile, TowerDataSO towerData)
@@ -277,6 +292,7 @@ namespace MicroDefense.Grid
 
             tile.IsOccupied = true;
             tile.PlacedTower = spawned;
+            AudioManager.Instance?.PlayTurretPlaced();
         }
 
         private bool TryPayTowerCost(TowerDataSO towerData)
@@ -285,7 +301,15 @@ namespace MicroDefense.Grid
             if (PlasmaManager.Instance == null) return true;
 
             int cost = Mathf.Max(0, towerData.baseCost);
-            return PlasmaManager.Instance.TrySpendPlasma(cost);
+            if (PlasmaManager.Instance.TrySpendPlasma(cost))
+            {
+                return true;
+            }
+            else
+            {
+                AudioManager.Instance?.PlayNotEnoughBalance();
+                return false;
+            }
         }
 
         private GameObject SpawnTowerInstance(TowerDataSO towerData, Vector3 position)

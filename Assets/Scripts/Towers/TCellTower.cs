@@ -1,3 +1,4 @@
+using MicroDefense.Core;
 using MicroDefense.Data;
 using MicroDefense.Enemies;
 using UnityEngine;
@@ -64,6 +65,9 @@ namespace MicroDefense.Towers
                 animator.SetBool(IsAttackingHash, true);
                 attackAnimTimer = attackAnimDuration;
             }
+
+            // Play T-Cell shooting SFX
+            AudioManager.Instance?.PlayTCellShooting();
 
             bool isTier3Apoptosis = currentTierStats.specialAbility == SpecialAbilityType.ApoptosisBlast;
             float projectileDamage = isTier3Apoptosis ? currentTierStats.damage * 0.50f : currentTierStats.damage;

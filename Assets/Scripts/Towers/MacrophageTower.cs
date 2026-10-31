@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using MicroDefense.Core;
 using MicroDefense.Data;
 using MicroDefense.Enemies;
+using MicroDefense.Grid;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,6 +19,8 @@ namespace MicroDefense.Towers
         public float maxHealth;
 
         private List<EnemyBase> currentlyBlockedEnemies = new List<EnemyBase>();
+        private Vector3Int placedAtCell; // Track cell position untuk cleanup
+        private float lastHurtSoundTime;
 
         protected override void Awake()
         {
@@ -146,6 +150,12 @@ namespace MicroDefense.Towers
             currentHealth -= finalDamage;
             if (currentHealth < 0) currentHealth = 0;
 
+            if (Time.time - lastHurtSoundTime > 0.5f && finalDamage > 0f)
+            {
+                lastHurtSoundTime = Time.time;
+                AudioManager.Instance?.PlayMacrophageHurt();
+            }
+
             // Macrophage menerima damage untuk menahan virus, tetapi virus TIDAK ikut hancur saat Macrophage mati
             if (currentHealth <= 0)
             {
@@ -167,12 +177,31 @@ namespace MicroDefense.Towers
             {
                 if (enemy != null)
                 {
+                    // CRITICAL FIX: Unsubscribe dari OnEnemyDied event sebelum unblock
+                    // Agar enemy tidak trigger handler Macro yang sudah destroyed
+                    enemy.OnEnemyDied -= HandleEnemyDiedWhileBlocked;
+                    
                     enemy.SetBlocked(false);
                     var navFollower = enemy.GetComponent<NavMeshPathFollower>();
                     if (navFollower != null) navFollower.SetBlockedBy(false);
                 }
             }
             currentlyBlockedEnemies.Clear();
+            
+            // Unoccupy grid tile
+            GridTile gridTile = GetComponent<GridTile>();
+            if (gridTile != null)
+            {
+                gridTile.IsOccupied = false;
+                gridTile.PlacedTower = null;
+            }
+            
+            // BARU: Clear tilemap occupied cell via PlacementGridManager
+            if (PlacementGridManager.Instance != null)
+            {
+                PlacementGridManager.Instance.RemoveOccupiedCell(placedAtCell);
+            }
+            
             Destroy(gameObject);
         }
     }

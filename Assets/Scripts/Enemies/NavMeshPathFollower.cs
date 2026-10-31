@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using MicroDefense.Core;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -33,6 +34,9 @@ namespace MicroDefense.Enemies
 
         // Transform tower yang sedang mem-block enemy ini
         private Transform currentBlocker;
+        
+        // FIX: Track pause state untuk stop NavMeshAgent
+        private GameState lastGameState = GameState.WaveInProgress;
 
         private void Awake()
         {
@@ -178,6 +182,17 @@ namespace MicroDefense.Enemies
         }
 
         /// <summary>
+        /// Resume pathfinding ke original destination
+        /// </summary>
+        public void ResumePathfinding()
+        {
+            if (agent == null || targetDestination == null) return;
+            
+            hasNavTarget = false; // Force recalculate
+            agent.isStopped = false;
+        }
+
+        /// <summary>
         /// Dipanggil oleh MacrophageTower saat mulai/berhenti mem-block enemy ini.
         /// Kirim transform tower agar enemy berjalan tepat ke posisinya, bukan berhenti jauh.
         /// </summary>
@@ -190,6 +205,11 @@ namespace MicroDefense.Enemies
                 // Arahkan agent ke posisi blocker agar enemy jalan maju ke tower
                 agent.isStopped = false;
                 agent.SetDestination(blockerTransform.position);
+            }
+            else if (!blocked && agent != null)
+            {
+                // BARU: Resume pathfinding ke original target saat unblock
+                ResumePathfinding();
             }
         }
 

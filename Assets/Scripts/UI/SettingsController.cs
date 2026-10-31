@@ -4,7 +4,7 @@ using TMPro;
 
 public class SettingsController : MonoBehaviour
 {
-    [SerializeField] private Slider masterVolumeSlider;
+    [SerializeField] private Slider bgmVolumeSlider;
     [SerializeField] private Slider sfxVolumeSlider;
     [SerializeField] private TMP_Dropdown qualityDropdown;
     [SerializeField] private Toggle fullscreenToggle;
@@ -16,11 +16,20 @@ public class SettingsController : MonoBehaviour
     {
         mainMenuController = GetComponentInParent<MainMenuController>();
         
-        // Setup volume sliders
-        if (masterVolumeSlider != null)
+        // Setup BGM volume slider
+        if (bgmVolumeSlider != null)
         {
-            masterVolumeSlider.value = AudioListener.volume;
-            masterVolumeSlider.onValueChanged.AddListener(SetMasterVolume);
+            float savedBgm = PlayerPrefs.GetFloat("BGMVolume", 1f);
+            bgmVolumeSlider.value = savedBgm;
+            bgmVolumeSlider.onValueChanged.AddListener(SetBGMVolume);
+        }
+
+        // Setup SFX volume slider
+        if (sfxVolumeSlider != null)
+        {
+            float savedSfx = PlayerPrefs.GetFloat("SFXVolume", 1f);
+            sfxVolumeSlider.value = savedSfx;
+            sfxVolumeSlider.onValueChanged.AddListener(SetSFXVolume);
         }
 
         // Setup quality dropdown
@@ -43,9 +52,24 @@ public class SettingsController : MonoBehaviour
             backButton.onClick.AddListener(() => mainMenuController.ShowMainMenu());
     }
 
-    private void SetMasterVolume(float volume)
+    private void SetBGMVolume(float volume)
     {
-        AudioListener.volume = volume;
+        if (MicroDefense.Core.AudioManager.Instance != null)
+        {
+            MicroDefense.Core.AudioManager.Instance.SetBGMVolume(volume);
+        }
+        else
+        {
+            AudioListener.volume = volume;
+        }
+    }
+
+    private void SetSFXVolume(float volume)
+    {
+        if (MicroDefense.Core.AudioManager.Instance != null)
+        {
+            MicroDefense.Core.AudioManager.Instance.SetSFXVolume(volume);
+        }
     }
 
     private void SetQuality(int qualityIndex)

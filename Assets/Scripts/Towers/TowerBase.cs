@@ -18,11 +18,16 @@ namespace MicroDefense.Towers
         public TowerTierData currentTierStats;
 
         [Header("Animation")]
-        [SerializeField] protected Animator animator;
+        [SerializeField] public Animator animator;
         protected static readonly int AttackHash = Animator.StringToHash("Attack");
 
         protected float attackTimer;
         public event Action<int> OnTierUpgraded;
+
+        protected virtual void OnDestroy()
+        {
+            // Virtual method untuk subclasses cleanup
+        }
 
         protected virtual void Awake()
         {
@@ -77,9 +82,22 @@ namespace MicroDefense.Towers
                 if (PlasmaManager.Instance.TrySpendPlasma(cost))
                 {
                     ApplyTierStats(currentTierLevel + 1);
+                    AudioManager.Instance?.PlayTurretUpgraded();
                     MicroDefense.UI.TowerShopUI shop = FindAnyObjectByType<MicroDefense.UI.TowerShopUI>();
                     if (shop != null) shop.RefreshUI();
                     return true;
+                }
+                else
+                {
+                    AudioManager.Instance?.PlayNotEnoughBalance();
+                }
+            }
+            else
+            {
+                // Cek apakah gagal karena tidak cukup plasma atau max tier
+                if (towerData != null && currentTierLevel < towerData.tiers.Count)
+                {
+                    AudioManager.Instance?.PlayNotEnoughBalance();
                 }
             }
             return false;

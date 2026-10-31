@@ -16,8 +16,8 @@ namespace MicroDefense.Core
 
         private void OnEnable()
         {
-            // Rebuild NavMesh whenever scene loads or this component is enabled
-            StartCoroutine(RebuildNavMeshOnLoad());
+            // Jangan rebuild otomatis saat pause atau resume
+            // Hanya biarkan build sekali di awal jika belum ada
         }
 
         private IEnumerator RebuildNavMeshOnLoad()
