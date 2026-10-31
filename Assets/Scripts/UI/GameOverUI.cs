@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using MicroDefense.Towers;
+using MicroDefense.Enemies;
 
 namespace MicroDefense.UI
 {
@@ -189,7 +191,20 @@ namespace MicroDefense.UI
                 Destroy(CompleteUIManager.Instance.gameObject);
             }
             
-            // 2. Destroy GameOverUI (this) juga
+            // 2. Destroy SimpleUI (juga pakai DontDestroyOnLoad)
+            if (SimpleUI.Instance != null)
+            {
+                Debug.Log("[GameOverUI] Destroying SimpleUI");
+                Destroy(SimpleUI.Instance.gameObject);
+            }
+            
+            // 3. Destroy semua tower yang ada di scene
+            DestroyAllTowers();
+            
+            // 4. Destroy semua enemy yang masih ada
+            DestroyAllEnemies();
+            
+            // 5. Destroy GameOverUI (this) juga
             if (Instance != null && Instance == this)
             {
                 Debug.Log("[GameOverUI] Destroying GameOverUI");
@@ -197,7 +212,7 @@ namespace MicroDefense.UI
                 Destroy(gameObject);
             }
             
-            // 3. Force destroy semua object di DontDestroyOnLoad scene
+            // 6. Force destroy semua object di DontDestroyOnLoad scene
             GameObject[] rootObjects = gameObject.scene.GetRootGameObjects();
             foreach (GameObject obj in rootObjects)
             {
@@ -208,21 +223,33 @@ namespace MicroDefense.UI
                     Destroy(obj);
                 }
             }
-            
-            // 4. Reset static instances (kalau ada yang hardcode)
-            // Ini akan di-reinitialize saat scene load
-            ResetStaticInstances();
         }
         
         /// <summary>
-        /// Reset semua static instance reference (optional safety)
+        /// Destroy semua tower yang ada di scene
         /// </summary>
-        private void ResetStaticInstances()
+        private void DestroyAllTowers()
         {
-            // Note: Kebanyakan manager akan auto-reset karena script di-reload
-            // Tapi kalau ada yang stuck, bisa tambahkan di sini
-            
-            Debug.Log("[GameOverUI] Static instances will be reinitialized on scene load.");
+            // Cari semua object dengan komponen TowerBase
+            MicroDefense.Towers.TowerBase[] towers = FindObjectsByType<MicroDefense.Towers.TowerBase>(FindObjectsSortMode.None);
+            foreach (var tower in towers)
+            {
+                Debug.Log($"[GameOverUI] Destroying tower: {tower.name}");
+                Destroy(tower.gameObject);
+            }
+        }
+        
+        /// <summary>
+        /// Destroy semua enemy yang masih ada di scene
+        /// </summary>
+        private void DestroyAllEnemies()
+        {
+            MicroDefense.Enemies.EnemyBase[] enemies = FindObjectsByType<MicroDefense.Enemies.EnemyBase>(FindObjectsSortMode.None);
+            foreach (var enemy in enemies)
+            {
+                Debug.Log($"[GameOverUI] Destroying enemy: {enemy.name}");
+                Destroy(enemy.gameObject);
+            }
         }
 
         /// <summary>

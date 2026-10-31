@@ -17,6 +17,10 @@ namespace MicroDefense.Towers
         public int currentTierLevel = 1;
         public TowerTierData currentTierStats;
 
+        [Header("Animation")]
+        [SerializeField] protected Animator animator;
+        protected static readonly int AttackHash = Animator.StringToHash("Attack");
+
         protected float attackTimer;
         public event Action<int> OnTierUpgraded;
 
@@ -26,6 +30,13 @@ namespace MicroDefense.Towers
             {
                 ApplyTierStats(1);
             }
+
+            // Auto-find animator if not assigned
+            if (animator == null)
+                animator = GetComponent<Animator>();
+            
+            if (animator == null)
+                animator = GetComponentInChildren<Animator>();
         }
 
         public void SetTowerData(TowerDataSO data)

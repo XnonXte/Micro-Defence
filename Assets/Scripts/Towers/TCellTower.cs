@@ -10,6 +10,38 @@ namespace MicroDefense.Towers
         [SerializeField] private bool rotateTowardTarget = true;
         [SerializeField] private float aimRotationOffset = 180f;
 
+        private static readonly int IsAttackingHash = Animator.StringToHash("IsAttacking");
+        private float attackAnimDuration = 0.5f;
+        private float attackAnimTimer = 0f;
+
+        protected override void Awake()
+        {
+            base.Awake();
+            PlayIdleAnimation();
+        }
+
+        /// <summary>Plays the Idle animation state (Blink for T-Cell).</summary>
+        private void PlayIdleAnimation()
+        {
+            if (animator != null)
+                animator.SetBool(Animator.StringToHash("Idle"), true);
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            
+            // Handle attack animation timer - auto-stop attack animation after duration
+            if (attackAnimTimer > 0f)
+            {
+                attackAnimTimer -= Time.deltaTime;
+                if (attackAnimTimer <= 0f && animator != null)
+                {
+                    animator.SetBool(IsAttackingHash, false);
+                }
+            }
+        }
+
         protected override bool TryPerformAttack()
         {
             EnemyBase target = FindNearestEnemy(currentTierStats.range);
@@ -24,6 +56,13 @@ namespace MicroDefense.Towers
                     float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
                     transform.rotation = Quaternion.Euler(0f, 0f, angle + aimRotationOffset);
                 }
+            }
+
+            // Trigger attack animation - T-Cell plays Shooting animation
+            if (animator != null)
+            {
+                animator.SetBool(IsAttackingHash, true);
+                attackAnimTimer = attackAnimDuration;
             }
 
             bool isTier3Apoptosis = currentTierStats.specialAbility == SpecialAbilityType.ApoptosisBlast;

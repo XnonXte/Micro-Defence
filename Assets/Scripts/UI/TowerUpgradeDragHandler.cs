@@ -12,7 +12,7 @@ namespace MicroDefense.UI
     public class TowerUpgradeDragHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         [SerializeField] private float targetRadius = 2.5f;
-        [SerializeField] private float indicatorSize = 2f;
+        [SerializeField] private float indicatorSize = 3f;
         [SerializeField] private Sprite idleBackground;
         [SerializeField] private Sprite draggingBackground;
         [SerializeField] private Image backgroundImage;
@@ -140,6 +140,8 @@ namespace MicroDefense.UI
             gridIndicatorRenderer = gridIndicator.AddComponent<SpriteRenderer>();
             gridIndicatorRenderer.sprite = CreateIndicatorSprite();
             gridIndicatorRenderer.sortingOrder = 90;
+            
+            // Use indicatorSize from inspector - adjust if needed
             gridIndicator.transform.localScale = Vector3.one * indicatorSize;
         }
 
@@ -152,6 +154,10 @@ namespace MicroDefense.UI
             worldPosition.x = Mathf.Round(worldPosition.x);
             worldPosition.y = Mathf.Round(worldPosition.y);
             worldPosition.z = 0f;
+            
+            // Naikin Y offset dari cursor
+            worldPosition.y += 1f;
+            
             gridIndicator.transform.position = worldPosition;
 
             TowerBase target = FindTowerAt(worldPosition);

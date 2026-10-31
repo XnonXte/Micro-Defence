@@ -26,6 +26,13 @@ namespace MicroDefense.Grid
         [Header("GameObject Grid System (Fallback)")]
         [SerializeField] private LayerMask placementTileLayer;
 
+        [Header("Ghost Preview Settings")]
+        [SerializeField] private float ghostPreviewScale = 1f;
+        [SerializeField] private float ghostPreviewAlpha = 0.7f;
+        [SerializeField] private Sprite bCellGhostSprite;
+        [SerializeField] private Sprite tCellGhostSprite;
+        [SerializeField] private Sprite macrophageGhostSprite;
+
         [Header("Runtime Drag State")]
         private TowerDataSO currentDraggingTower;
         private GameObject ghostPreviewObj;
@@ -54,6 +61,8 @@ namespace MicroDefense.Grid
 
         private void Start()
         {
+            // Reset grid state on scene load - fresh start
+            ResetGridState();
         }
 
         private void Update()
@@ -85,6 +94,26 @@ namespace MicroDefense.Grid
 #endif
             return false;
         }
+
+        #region Grid State Management
+
+        public void ResetGridState()
+        {
+            // Clear occupied tiles
+            occupiedTilemapCells.Clear();
+            
+            // Cancel any active drag
+            CancelDragPlacement();
+            
+            // Reset drag state
+            currentDraggingTower = null;
+            currentTargetTile = null;
+            isCurrentPlacementValid = false;
+            
+            Debug.Log("[PlacementGridManager.ResetGridState] Grid state reset for new round");
+        }
+
+        #endregion
 
         #region Drag & Drop Placement Methods
 
@@ -311,10 +340,24 @@ namespace MicroDefense.Grid
             ghostSpriteRenderer.sortingOrder = 100;
             ghostSpriteRenderer.sortingLayerName = "Default";
 
-            // PRIORITY: Get sprite dari prefab SpriteRenderer dulu
+            // Get sprite dari inspector dulu
             Sprite towerSprite = null;
             
-            if (towerData.towerPrefab != null)
+            if (towerData.towerType == TowerType.BCell && bCellGhostSprite != null)
+            {
+                towerSprite = bCellGhostSprite;
+            }
+            else if (towerData.towerType == TowerType.TCell && tCellGhostSprite != null)
+            {
+                towerSprite = tCellGhostSprite;
+            }
+            else if (towerData.towerType == TowerType.Macrophage && macrophageGhostSprite != null)
+            {
+                towerSprite = macrophageGhostSprite;
+            }
+
+            // FALLBACK: Get sprite dari prefab
+            if (towerSprite == null && towerData.towerPrefab != null)
             {
                 SpriteRenderer prefabSr = towerData.towerPrefab.GetComponent<SpriteRenderer>();
                 if (prefabSr != null && prefabSr.sprite != null)
@@ -323,20 +366,19 @@ namespace MicroDefense.Grid
                 }
             }
 
-            // FALLBACK: Jika prefab tidak punya sprite, coba icon dari TowerDataSO
+            // FALLBACK: Coba icon dari TowerDataSO
             if (towerSprite == null && towerData.icon != null)
             {
                 towerSprite = towerData.icon;
             }
 
-            // FINAL FALLBACK: Generate kotak hanya jika benar-benar tidak ada sprite
+            // FINAL FALLBACK: Generate kotak
             if (towerSprite != null)
             {
                 ghostSpriteRenderer.sprite = towerSprite;
             }
             else
             {
-                // Generate circle/square hanya sebagai last resort
                 Color color = towerData.towerType switch
                 {
                     TowerType.BCell => Color.cyan,
@@ -347,20 +389,13 @@ namespace MicroDefense.Grid
                 ghostSpriteRenderer.sprite = CreateSimpleCircleSprite(color);
             }
 
-            // Match scale dengan actual tower prefab
-            if (towerData.towerPrefab != null)
-            {
-                ghostPreviewObj.transform.localScale = towerData.towerPrefab.transform.localScale;
-            }
-            else
-            {
-                ghostPreviewObj.transform.localScale = Vector3.one;
-            }
+            // Apply ghost preview scale dari inspector
+            ghostPreviewObj.transform.localScale = Vector3.one * ghostPreviewScale;
 
             // Position di world space dengan Z = 0
             ghostPreviewObj.transform.position = Vector3.zero;
 
-            SetGhostColor(new Color(0.2f, 1f, 0.2f, 0.7f));
+            SetGhostColor(new Color(0.2f, 1f, 0.2f, ghostPreviewAlpha));
         }
 
         private void SetGhostColor(Color color)

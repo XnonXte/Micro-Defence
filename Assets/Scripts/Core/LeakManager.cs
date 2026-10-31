@@ -4,22 +4,22 @@ using UnityEngine;
 namespace MicroDefense.Core
 {
     /// <summary>
-    /// PlayerHealth - Mengatur health player yang berkurang saat enemy sampai target
-    /// Health berkurang berdasarkan damage dari setiap enemy
+    /// LeakManager - Menghitung jumlah enemy yang lolos ke target
+    /// Start dari 0 leak, naik setiap enemy lolos, kalah saat leak = maxCapacity
     /// </summary>
     public class LeakManager : MonoBehaviour
     {
         public static LeakManager Instance { get; private set; }
 
-        [Header("Player Health Settings")]
-        [SerializeField] private int maxHealth = 20;
-        [SerializeField] private int currentHealth;
+        [Header("Leak Capacity Settings")]
+        [SerializeField] private int maxLeakCapacity = 20;
+        [SerializeField] private int currentLeakCount;
         
-        public int CurrentHealth => currentHealth;
-        public int MaxHealth => maxHealth;
+        public int CurrentLeakCount => currentLeakCount;
+        public int MaxLeakCapacity => maxLeakCapacity;
 
-        public event Action<int, int> OnLeakChanged; // (current, max) - untuk backward compatibility
-        public event Action<int, int> OnHealthChanged; // (currentHealth, maxHealth)
+        public event Action<int, int> OnLeakChanged; // (currentLeak, maxCapacity)
+        public event Action<int, int> OnHealthChanged; // Backward compatibility - maps to LeakChanged
         public event Action OnDefeat;
 
         private bool defeatTriggered;
@@ -33,37 +33,39 @@ namespace MicroDefense.Core
                 return;
             }
             Instance = this;
-            currentHealth = maxHealth;
+            currentLeakCount = 0; // Start dengan 0 leak
             defeatTriggered = false;
             initialized = false;
         }
 
         private void Start()
         {
-            currentHealth = maxHealth;
+            currentLeakCount = 0;
             defeatTriggered = false;
             initialized = true;
-            OnHealthChanged?.Invoke(currentHealth, maxHealth);
-            OnLeakChanged?.Invoke(currentHealth, maxHealth); // backward compatibility
+            OnLeakChanged?.Invoke(currentLeakCount, maxLeakCapacity);
+            OnHealthChanged?.Invoke(currentLeakCount, maxLeakCapacity); // Backward compatibility
         }
 
         /// <summary>
-        /// Dipanggil saat enemy sampai ke target. Damage dikurangi dari health.
+        /// Dipanggil saat enemy lolos ke target. Leak count bertambah 1.
         /// </summary>
         public void RegisterLeak(int damage = 1)
         {
             if (!initialized || defeatTriggered) return;
             if (GameManager.Instance == null || GameManager.Instance.CurrentState != GameState.WaveInProgress)
                 return;
-            currentHealth -= damage;
-            if (currentHealth < 0) currentHealth = 0;
+            
+            currentLeakCount += damage;
+            if (currentLeakCount > maxLeakCapacity) currentLeakCount = maxLeakCapacity;
 
-            OnHealthChanged?.Invoke(currentHealth, maxHealth);
-            OnLeakChanged?.Invoke(currentHealth, maxHealth); // backward compatibility
+            OnLeakChanged?.Invoke(currentLeakCount, maxLeakCapacity);
+            OnHealthChanged?.Invoke(currentLeakCount, maxLeakCapacity); // Backward compatibility
 
-            Debug.Log($"[PlayerHealth] Enemy reached target! Damage: {damage}, Remaining Health: {currentHealth}/{maxHealth}");
+            Debug.Log($"[LeakManager] Enemy reached target! Leaks: {currentLeakCount}/{maxLeakCapacity}");
 
-            if (currentHealth <= 0)
+            // Kalah saat leak mencapai kapasitas maksimal
+            if (currentLeakCount >= maxLeakCapacity)
             {
                 TriggerDefeat();
             }
@@ -73,10 +75,9 @@ namespace MicroDefense.Core
         {
             if (defeatTriggered) return;
             defeatTriggered = true;
-            Debug.Log("[PlayerHealth] Player defeated! Health reached 0.");
+            Debug.Log("[LeakManager] Leak capacity reached! Player defeated!");
             OnDefeat?.Invoke();
             
-            // Show defeat screen
             if (CompleteUIManager.Instance != null)
             {
                 CompleteUIManager.Instance.ShowDefeat();
@@ -89,25 +90,26 @@ namespace MicroDefense.Core
         }
 
         /// <summary>
-        /// Heal player (opsional untuk power-ups nanti)
+        /// Reduce leak count (opsional untuk power-ups)
         /// </summary>
-        public void Heal(int amount)
+        public void ReduceLeak(int amount)
         {
-            currentHealth += amount;
-            if (currentHealth > maxHealth) currentHealth = maxHealth;
+            currentLeakCount -= amount;
+            if (currentLeakCount < 0) currentLeakCount = 0;
 
-            OnHealthChanged?.Invoke(currentHealth, maxHealth);
-            OnLeakChanged?.Invoke(currentHealth, maxHealth);
+            OnLeakChanged?.Invoke(currentLeakCount, maxLeakCapacity);
+            OnHealthChanged?.Invoke(currentLeakCount, maxLeakCapacity);
         }
 
         /// <summary>
-        /// Reset health ke max (untuk restart game)
+        /// Reset leak count (untuk restart game)
         /// </summary>
-        public void ResetHealth()
+        public void ResetLeaks()
         {
-            currentHealth = maxHealth;
-            OnHealthChanged?.Invoke(currentHealth, maxHealth);
-            OnLeakChanged?.Invoke(currentHealth, maxHealth);
+            currentLeakCount = 0;
+            defeatTriggered = false;
+            OnLeakChanged?.Invoke(currentLeakCount, maxLeakCapacity);
+            OnHealthChanged?.Invoke(currentLeakCount, maxLeakCapacity);
         }
     }
 }

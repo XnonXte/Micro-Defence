@@ -215,7 +215,7 @@ public sealed class SimpleUI : MonoBehaviour
     private void RefreshValues()
     {
         if (WaveManager.Instance != null) UpdateWave(WaveManager.Instance.currentWaveIndex + 1, WaveManager.Instance.TotalWaves > 0 ? WaveManager.Instance.TotalWaves : totalWavesFallback);
-        if (LeakManager.Instance != null) UpdateHealth(LeakManager.Instance.CurrentHealth, LeakManager.Instance.MaxHealth);
+        if (LeakManager.Instance != null) UpdateHealth(LeakManager.Instance.CurrentLeakCount, LeakManager.Instance.MaxLeakCapacity);
         if (PlasmaManager.Instance != null) UpdatePlasma(PlasmaManager.Instance.CurrentPlasma);
     }
 
@@ -288,7 +288,7 @@ public sealed class SimpleUI : MonoBehaviour
         HideResult();
 
         if (LeakManager.Instance != null)
-            LeakManager.Instance.ResetHealth();
+            LeakManager.Instance.ResetLeaks();
 
         if (WaveManager.Instance != null)
         {

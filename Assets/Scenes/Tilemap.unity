@@ -4821,7 +4821,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 223, y: 7}
+  m_AnchoredPosition: {x: 223, y: -92}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &460186220
@@ -5617,7 +5617,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1029137962
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7099,11 +7099,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7106149713932556153, guid: 2be9df5ec9cec4e4f98b99822e392b9a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -13.5
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 7106149713932556153, guid: 2be9df5ec9cec4e4f98b99822e392b9a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.2
+      value: 7.5
       objectReference: {fileID: 0}
     - target: {fileID: 7106149713932556153, guid: 2be9df5ec9cec4e4f98b99822e392b9a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7893,9 +7893,21 @@ PrefabInstance:
       propertyPath: noPathTilemap
       value: 
       objectReference: {fileID: 427430310}
+    - target: {fileID: 8753810485399564475, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
+      propertyPath: bCellGhostSprite
+      value: 
+      objectReference: {fileID: 8907483544199537890, guid: 598b992db6585e547a434fa9ef411b55, type: 3}
+    - target: {fileID: 8753810485399564475, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
+      propertyPath: tCellGhostSprite
+      value: 
+      objectReference: {fileID: -4862429781060820726, guid: 40d89635798235e4cbc9c4c34174e370, type: 3}
+    - target: {fileID: 8753810485399564475, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
+      propertyPath: macrophageGhostSprite
+      value: 
+      objectReference: {fileID: 4395833850673153464, guid: c13640326a0daa145872002fd6affaca, type: 3}
     - target: {fileID: 9050211525397516610, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
       propertyPath: maxHealth
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8011,8 +8023,16 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 775728512205609505, guid: 5c67e5b9dec444541a412b73bd8580d3, type: 3}
+      propertyPath: m_FillAmount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 775728512205609505, guid: 5c67e5b9dec444541a412b73bd8580d3, type: 3}
       propertyPath: m_FillMethod
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 775728512205609505, guid: 5c67e5b9dec444541a412b73bd8580d3, type: 3}
+      propertyPath: m_FillOrigin
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 775728512205609505, guid: 5c67e5b9dec444541a412b73bd8580d3, type: 3}
       propertyPath: m_PreserveAspect
@@ -8321,7 +8341,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7106149713932556153, guid: 2be9df5ec9cec4e4f98b99822e392b9a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -13.65
+      value: -14.3
       objectReference: {fileID: 0}
     - target: {fileID: 7106149713932556153, guid: 2be9df5ec9cec4e4f98b99822e392b9a, type: 3}
       propertyPath: m_LocalPosition.y

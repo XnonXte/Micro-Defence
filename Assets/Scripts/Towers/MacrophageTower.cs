@@ -23,6 +23,14 @@ namespace MicroDefense.Towers
             base.Awake();
             maxHealth = currentTierStats.maxHealth;
             currentHealth = maxHealth;
+            PlayIdleAnimation();
+        }
+
+        /// <summary>Plays the Idle animation state (Blink only for Macrophage).</summary>
+        private void PlayIdleAnimation()
+        {
+            if (animator != null)
+                animator.SetTrigger(Animator.StringToHash("Idle"));
         }
 
         public override void ApplyTierStats(int tierLevel)
@@ -110,6 +118,9 @@ namespace MicroDefense.Towers
         protected override bool TryPerformAttack()
         {
             if (currentlyBlockedEnemies.Count == 0) return false;
+
+            // Macrophage DOES NOT have an Attack animation - only plays Idle (Blink)
+            // No animator.SetTrigger(AttackHash) call here
 
             for (int i = currentlyBlockedEnemies.Count - 1; i >= 0; i--)
             {

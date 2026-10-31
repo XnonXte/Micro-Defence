@@ -134,7 +134,7 @@
                 if (WaveManager.Instance != null)
                     UpdateWave(WaveManager.Instance.currentWaveIndex + 1, Mathf.Max(1, WaveManager.Instance.TotalWaves));
                 if (LeakManager.Instance != null)
-                    UpdateHealth(LeakManager.Instance.CurrentHealth, LeakManager.Instance.MaxHealth);
+                    UpdateHealth(LeakManager.Instance.CurrentLeakCount, LeakManager.Instance.MaxLeakCapacity);
                 if (PlasmaManager.Instance != null)
                     UpdatePlasma(PlasmaManager.Instance.CurrentPlasma);
             }
@@ -193,7 +193,11 @@
                 }
 
                 if (leaksLevelText != null && LeakManager.Instance != null)
-                    leaksLevelText.text = $"LEAKS LEVEL\n{LeakManager.Instance.MaxHealth - LeakManager.Instance.CurrentHealth}";
+                {
+                    int leakCurrent = LeakManager.Instance.CurrentLeakCount;
+                    int leakMax = LeakManager.Instance.MaxLeakCapacity;
+                    leaksLevelText.text = $"LEAKS LEVEL\n{leakCurrent}/{leakMax}";
+                }
             }
 
             private int GetNextUpgradeCost(TowerDataSO tower)

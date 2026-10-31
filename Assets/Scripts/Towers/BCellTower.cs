@@ -6,34 +6,40 @@ namespace MicroDefense.Towers
 {
     public class BCellTower : TowerBase
     {
-        [Header("Animation")]
-        [SerializeField] private Animator animator;
-
         [Header("Aiming")]
         [SerializeField] private bool rotateTowardTarget = true;
         [SerializeField] private float aimRotationOffset = 90f;
 
-        // Animator parameter names — must match what you set in the Animator Controller
-        private static readonly int IdleHash   = Animator.StringToHash("Idle");
-        private static readonly int AttackHash = Animator.StringToHash("Attack");
+        private static readonly int IsAttackingHash = Animator.StringToHash("IsAttacking");
+        private float attackAnimDuration = 0.5f;
+        private float attackAnimTimer = 0f;
 
         protected override void Awake()
         {
             base.Awake();
-
-            // Auto-find Animator if not assigned in Inspector
-            if (animator == null)
-                animator = GetComponentInChildren<Animator>();
-
-            // Start playing Idle immediately
-            PlayIdle();
+            PlayIdleAnimation();
         }
 
-        /// <summary>Plays the Idle animation state.</summary>
-        private void PlayIdle()
+        /// <summary>Plays the Idle animation state (Blink for B-Cell).</summary>
+        private void PlayIdleAnimation()
         {
             if (animator != null)
-                animator.SetTrigger(IdleHash);
+                animator.SetBool(Animator.StringToHash("Idle"), true);
+        }
+
+        protected override void Update()
+        {
+            base.Update();
+            
+            // Handle attack animation timer - auto-stop attack animation after duration
+            if (attackAnimTimer > 0f)
+            {
+                attackAnimTimer -= Time.deltaTime;
+                if (attackAnimTimer <= 0f && animator != null)
+                {
+                    animator.SetBool(IsAttackingHash, false);
+                }
+            }
         }
 
         protected override bool TryPerformAttack()
@@ -52,9 +58,12 @@ namespace MicroDefense.Towers
                 }
             }
 
-            // Trigger attack animation
+            // Trigger attack animation - B-Cell plays Shooting animation
             if (animator != null)
-                animator.SetTrigger(AttackHash);
+            {
+                animator.SetBool(IsAttackingHash, true);
+                attackAnimTimer = attackAnimDuration;
+            }
 
             // Use base class SpawnProjectile (ADJUSTABLE damage)
             SpawnProjectile(target);

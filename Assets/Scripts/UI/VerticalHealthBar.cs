@@ -92,8 +92,8 @@ namespace MicroDefense.UI
                 // MODE SINKRON: Ambil dari LeakManager
                 if (LeakManager.Instance != null)
                 {
-                    maxHP = LeakManager.Instance.MaxHealth;
-                    currentHP = LeakManager.Instance.CurrentHealth;
+                    maxHP = LeakManager.Instance.MaxLeakCapacity;
+                    currentHP = LeakManager.Instance.CurrentLeakCount;
                     Debug.Log($"[VerticalHealthBar] Synced with LeakManager: maxHP={maxHP}, currentHP={currentHP}");
                     
                     // Subscribe untuk update
@@ -102,7 +102,7 @@ namespace MicroDefense.UI
                 else
                 {
                     Debug.LogWarning("[VerticalHealthBar] LeakManager not found! Using default values.");
-                    currentHP = maxHP;
+                    currentHP = 0;
                 }
             }
             
@@ -125,29 +125,47 @@ namespace MicroDefense.UI
         }
 
         /// <summary>
-        /// Callback dari LeakManager saat health berubah
+        /// Callback dari LeakManager saat leak berubah
+        /// Leak naik = bar naik
         /// </summary>
-        private void OnHealthChanged(int newHealth, int maxHealth)
+        private void OnHealthChanged(int newLeakCount, int maxCapacity)
         {
-            TakeDamage(currentHP - newHealth);
+            // Direct update: newLeakCount adalah total leak, bukan damage
+            UpdateHealthBar(newLeakCount, maxCapacity, true);
         }
 
         /// <summary>
-        /// Kurangi HP dan update tampilan bar
+        /// Kurangi leak (opsional untuk power-ups)
         /// </summary>
-        /// <param name="damage">Jumlah damage yang diterima</param>
+        public void ReduceLeak(int amount)
+        {
+            if (amount <= 0) return;
+
+            currentHP -= amount;
+            if (currentHP < 0) currentHP = 0;
+
+            UpdateHealthBar(currentHP, maxHP, true);
+
+            if (useShakeEffect && wadahBening != null)
+            {
+                if (shakeCoroutine != null)
+                    StopCoroutine(shakeCoroutine);
+                shakeCoroutine = StartCoroutine(ShakeWadah());
+            }
+        }
+
+        /// <summary>
+        /// TakeDamage dipanggil saat leak bertambah
+        /// </summary>
         public void TakeDamage(int damage)
         {
             if (damage <= 0) return;
 
-            // Kurangi HP
-            currentHP -= damage;
-            if (currentHP < 0) currentHP = 0;
+            currentHP += damage; // NAIK, bukan turun!
+            if (currentHP > maxHP) currentHP = maxHP;
 
-            // Update tampilan bar dengan animasi
             UpdateHealthBar(currentHP, maxHP, true);
 
-            // Shake effect
             if (useShakeEffect && wadahBening != null)
             {
                 if (shakeCoroutine != null)
@@ -155,8 +173,7 @@ namespace MicroDefense.UI
                 shakeCoroutine = StartCoroutine(ShakeWadah());
             }
 
-            // Check game over
-            if (currentHP <= 0)
+            if (currentHP >= maxHP)
             {
                 OnHealthDepleted();
             }
@@ -182,12 +199,13 @@ namespace MicroDefense.UI
 
         /// <summary>
         /// Update tampilan bar sesuai HP saat ini
+        /// REVERSE: Cairan naik dari bawah (kosong) ke atas (penuh)
         /// </summary>
         private void UpdateHealthBar(int currentHealth, int maxHealth, bool animate)
         {
             if (cairanPlasma == null) return;
 
-            // Hitung fill amount (1.0 = penuh, 0.0 = kosong)
+            // Hitung fill amount - REVERSE: 0.0 = kosong (bawah), 1.0 = penuh (atas)
             float healthRatio = maxHealth > 0 ? (float)currentHealth / maxHealth : 0f;
             targetFillAmount = Mathf.Clamp01(healthRatio);
 

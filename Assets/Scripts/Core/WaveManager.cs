@@ -100,7 +100,12 @@ namespace MicroDefense.Core
             activeEnemyCount = 0;
             isWaveSpawning = false;
             completionTriggered = false;
+            
+            // Clear wave data completely to force reload on next Start()
+            waves.Clear();
+            
             PublishWaveStatus();
+            Debug.Log("[WaveManager.ResetRun] Wave state fully reset for retry");
         }
 
         private IEnumerator RunWave(WaveDataSO waveData)

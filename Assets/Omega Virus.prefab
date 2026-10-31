@@ -87,7 +87,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: -6407368499309166625, guid: 181d75043febff049b8161b2a5e5bfa6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -150,6 +150,9 @@ MonoBehaviour:
   currentHealth: 0
   currentSpeed: 0
   currentArmor: 0
+  hitFlashDuration: 0.15
+  hitFlashColor: {r: 1, g: 1, b: 1, a: 1}
+  searchInChildren: 1
 --- !u!195 &1909550130635965888
 NavMeshAgent:
   m_ObjectHideFlags: 0

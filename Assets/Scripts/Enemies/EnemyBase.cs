@@ -18,6 +18,11 @@ namespace MicroDefense.Enemies
         public float currentArmor;
         public bool IsBlocked { get; private set; }
 
+        [Header("Hit Effect")]
+        [SerializeField] private float hitFlashDuration = 0.15f;
+        [SerializeField] private Color hitFlashColor = Color.white;
+        [SerializeField] private bool searchInChildren = true;
+
         // Status Effects
         private bool isSlowed;
         private float slowTimer;
@@ -26,6 +31,11 @@ namespace MicroDefense.Enemies
         private bool hasArmorShred;
         private float armorShredTimer;
         private float armorShredFactor = 0f; // e.g. 0.25 for 25% shred
+
+        // Hit Effect
+        private SpriteRenderer spriteRenderer;
+        private Color originalColor;
+        private Coroutine hitFlashCoroutine;
 
         public event Action<float, float> OnHealthChanged; // (current, max)
         public event Action OnEnemyDied;
@@ -40,6 +50,25 @@ namespace MicroDefense.Enemies
             if (enemyData != null)
             {
                 Initialize(enemyData);
+            }
+            
+            // Cache sprite renderer for hit effects
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            
+            // If not found on this object, search in children
+            if (spriteRenderer == null && searchInChildren)
+            {
+                spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            }
+            
+            if (spriteRenderer != null)
+            {
+                originalColor = spriteRenderer.color;
+                Debug.Log($"[EnemyBase.Awake] Found SpriteRenderer on {gameObject.name}, original color: {originalColor}");
+            }
+            else
+            {
+                Debug.LogWarning($"[EnemyBase.Awake] No SpriteRenderer found on {gameObject.name} or its children!");
             }
         }
 
@@ -109,6 +138,9 @@ namespace MicroDefense.Enemies
             currentHealth -= finalDamage;
             OnHealthChanged?.Invoke(currentHealth, enemyData.baseHealth);
 
+            // Play hit flash effect
+            PlayHitEffect();
+
             if (currentHealth <= 0)
             {
                 Die();
@@ -140,6 +172,39 @@ namespace MicroDefense.Enemies
 
             OnEnemyDied?.Invoke();
             Destroy(gameObject);
+        }
+
+        private void PlayHitEffect()
+        {
+            if (spriteRenderer == null)
+            {
+                Debug.LogWarning($"[EnemyBase.PlayHitEffect] SpriteRenderer is null on {gameObject.name}");
+                return;
+            }
+
+            // Stop existing flash coroutine if running
+            if (hitFlashCoroutine != null)
+            {
+                StopCoroutine(hitFlashCoroutine);
+            }
+
+            Debug.Log($"[EnemyBase.PlayHitEffect] Playing hit flash on {gameObject.name}");
+            // Start new flash effect
+            hitFlashCoroutine = StartCoroutine(HitFlashCoroutine());
+        }
+
+        private IEnumerator HitFlashCoroutine()
+        {
+            // Flash to white
+            Color originalColorTemp = spriteRenderer.color;
+            spriteRenderer.color = hitFlashColor;
+            Debug.Log($"[EnemyBase.HitFlashCoroutine] Flashed to white: {hitFlashColor}");
+            
+            yield return new WaitForSeconds(hitFlashDuration);
+            
+            // Return to original color
+            spriteRenderer.color = originalColorTemp;
+            Debug.Log($"[EnemyBase.HitFlashCoroutine] Returned to original color: {originalColorTemp}");
         }
 
         public virtual void OnReachedEndPath()
