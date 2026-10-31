@@ -1,122 +1,75 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
-
-[System.Serializable]
-public struct LevelData
-{
-    public string levelName;
-    public string sceneName;
-    public string description;
-    public int difficulty; // 1-5 stars
-}
+using UnityEngine.SceneManagement;
 
 public class LevelSelectController : MonoBehaviour
 {
     [SerializeField] private GameObject levelSelectPanel;
-    [SerializeField] private Transform levelButtonContainer;
-    [SerializeField] private GameObject levelButtonPrefab;
     [SerializeField] private Button backButton;
+    [SerializeField] private Button level1Button;
+    [SerializeField] private Button level2Button;
+    [SerializeField] private Button level3Button;
+    [SerializeField] private Button level4Button;
+    [SerializeField] private Button level5Button;
     [SerializeField] private MainMenuController mainMenuController;
-
-    [SerializeField] private LevelData[] levels = new LevelData[]
-    {
-        new LevelData 
-        { 
-            levelName = "Level 1", 
-            sceneName = "Tilemap", 
-            description = "Tutorial - Learn the basics", 
-            difficulty = 1 
-        },
-        new LevelData 
-        { 
-            levelName = "Level 2", 
-            sceneName = "level1", 
-            description = "Easy - Warm up", 
-            difficulty = 2 
-        },
-        new LevelData 
-        { 
-            levelName = "Level 3", 
-            sceneName = "level2", 
-            description = "Medium - Getting challenging", 
-            difficulty = 3 
-        },
-    };
 
     private void Start()
     {
+        // Setup back button
         if (backButton != null)
             backButton.onClick.AddListener(BackToMainMenu);
+        else
+            Debug.LogWarning("[LevelSelectController] Back button not assigned!");
 
-        BuildLevelButtons();
-        levelSelectPanel.SetActive(false);
-    }
+        // Setup level buttons
+        if (level1Button != null)
+            level1Button.onClick.AddListener(() => LoadLevel("1"));
+        
+        if (level2Button != null)
+            level2Button.onClick.AddListener(() => LoadLevel("2"));
+        
+        if (level3Button != null)
+            level3Button.onClick.AddListener(() => LoadLevel("3"));
+        
+        if (level4Button != null)
+            level4Button.onClick.AddListener(() => LoadLevel("4"));
+        
+        if (level5Button != null)
+            level5Button.onClick.AddListener(() => LoadLevel("5"));
 
-    private void BuildLevelButtons()
-    {
-        if (levelButtonContainer == null) return;
-
-        // Clear existing buttons
-        foreach (Transform child in levelButtonContainer)
-        {
-            Destroy(child.gameObject);
-        }
-
-        // Create button for each level
-        for (int i = 0; i < levels.Length; i++)
-        {
-            int index = i;
-            GameObject buttonObj = Instantiate(levelButtonPrefab, levelButtonContainer);
-            Button button = buttonObj.GetComponent<Button>();
-
-            if (button != null)
-            {
-                button.onClick.AddListener(() => SelectLevel(index));
-            }
-
-            // Setup button text and info
-            TextMeshProUGUI[] texts = buttonObj.GetComponentsInChildren<TextMeshProUGUI>();
-            if (texts.Length >= 1)
-                texts[0].text = levels[index].levelName;
-            if (texts.Length >= 2)
-                texts[1].text = levels[index].description;
-            if (texts.Length >= 3)
-                texts[2].text = GetDifficultyStars(levels[index].difficulty);
-        }
-    }
-
-    private string GetDifficultyStars(int difficulty)
-    {
-        string stars = "";
-        for (int i = 0; i < difficulty; i++)
-            stars += "★";
-        for (int i = difficulty; i < 5; i++)
-            stars += "☆";
-        return stars;
+        // Hide panel at start
+        if (levelSelectPanel != null)
+            levelSelectPanel.SetActive(false);
+        else
+            Debug.LogError("[LevelSelectController] Level Select Panel not assigned!");
+        
+        // Find MainMenuController if not assigned
+        if (mainMenuController == null)
+            mainMenuController = FindAnyObjectByType<MainMenuController>();
     }
 
     public void ShowLevelSelect()
     {
-        levelSelectPanel.SetActive(true);
+        if (levelSelectPanel != null)
+            levelSelectPanel.SetActive(true);
     }
 
     public void HideLevelSelect()
     {
-        levelSelectPanel.SetActive(false);
+        if (levelSelectPanel != null)
+            levelSelectPanel.SetActive(false);
     }
 
-    private void SelectLevel(int levelIndex)
+    private void LoadLevel(string sceneName)
     {
-        if (levelIndex >= 0 && levelIndex < levels.Length)
-        {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(levels[levelIndex].sceneName);
-        }
+        Debug.Log($"[LevelSelectController] Loading scene: {sceneName}");
+        SceneManager.LoadScene(sceneName);
     }
 
     private void BackToMainMenu()
     {
         HideLevelSelect();
-        mainMenuController.ShowMainMenu();
+        if (mainMenuController != null)
+            mainMenuController.ShowMainMenu();
     }
 }

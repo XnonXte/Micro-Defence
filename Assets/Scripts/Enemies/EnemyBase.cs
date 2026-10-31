@@ -33,7 +33,7 @@ namespace MicroDefense.Enemies
         private float armorShredFactor = 0f; // e.g. 0.25 for 25% shred
 
         // Hit Effect
-        private SpriteRenderer spriteRenderer;
+        protected SpriteRenderer spriteRenderer;
         private Color originalColor;
         private Coroutine hitFlashCoroutine;
 

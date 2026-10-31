@@ -5,13 +5,10 @@ namespace MicroDefense.Enemies
 {
     public sealed class SwarmVirus : EnemyBase
     {
-        [SerializeField] private SpriteRenderer spriteRenderer;
-
         private int remainingLives;
 
         protected override void Awake()
         {
-            spriteRenderer = spriteRenderer != null ? spriteRenderer : GetComponent<SpriteRenderer>();
             base.Awake();
         }
 

@@ -68,9 +68,15 @@ public class CreditsController : MonoBehaviour
         {
             layoutGroup = creditsContent.gameObject.AddComponent<VerticalLayoutGroup>();
             layoutGroup.childForceExpandHeight = false;
-            layoutGroup.childForceExpandWidth = false;
+            layoutGroup.childForceExpandWidth = true; // Force expand width untuk center alignment
+            layoutGroup.childAlignment = TextAnchor.UpperCenter; // Center horizontally
             layoutGroup.spacing = 10;
             layoutGroup.padding = new RectOffset(20, 20, 20, 20);
+        }
+        else
+        {
+            layoutGroup.childForceExpandWidth = true;
+            layoutGroup.childAlignment = TextAnchor.UpperCenter;
         }
 
         // Add LayoutElement to Content

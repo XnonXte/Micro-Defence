@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using MicroDefense.Core;
 using MicroDefense.Towers;
 using MicroDefense.Enemies;
 
@@ -94,7 +95,15 @@ namespace MicroDefense.UI
                 if (winMessageText != null)
                     winMessageText.text = message;
 
-                Time.timeScale = 0f; // Pause game
+                // Gunakan GameManager untuk pause (sama seperti pause button)
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.SetGameState(GameState.Victory);
+                }
+                else
+                {
+                    Time.timeScale = 0f; // Fallback jika GameManager tidak ada
+                }
             }
         }
 
@@ -113,7 +122,15 @@ namespace MicroDefense.UI
                 if (loseMessageText != null)
                     loseMessageText.text = message;
 
-                Time.timeScale = 0f; // Pause game
+                // Gunakan GameManager untuk pause (sama seperti pause button)
+                if (GameManager.Instance != null)
+                {
+                    GameManager.Instance.SetGameState(GameState.Defeat);
+                }
+                else
+                {
+                    Time.timeScale = 0f; // Fallback jika GameManager tidak ada
+                }
             }
         }
 

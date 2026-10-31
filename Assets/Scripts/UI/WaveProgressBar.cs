@@ -14,7 +14,7 @@ namespace MicroDefense.UI
         [Header("Sizing")]
         [SerializeField] private float barScale = 1f;
         [SerializeField] private float virusScale = 1f;
-        [SerializeField] private float positionOffsetX = 0f; // Offset untuk adjust virus position
+        [SerializeField] private float positionOffsetX = -10f; // Offset untuk adjust virus position (negatif = kiri)
 
         [Header("Behavior")]
         [SerializeField] private float smoothDuration = 0.5f;

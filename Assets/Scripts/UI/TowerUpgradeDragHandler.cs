@@ -62,6 +62,7 @@ namespace MicroDefense.UI
             
             CreateIndicator();
             UpdateIndicator(eventData);
+            ShowAllTowerUpgradeInfo();
             
             // Pindahkan ke overlay canvas agar bisa follow cursor di world space
             if (rectTransform != null)
@@ -113,6 +114,7 @@ namespace MicroDefense.UI
             if (target != null)
                 target.TryUpgrade();
 
+            HideAllTowerUpgradeInfo();
             DestroyIndicator();
             ResetPosition();
             
@@ -223,6 +225,39 @@ namespace MicroDefense.UI
             }
 
             return closest;
+        }
+
+        private void ShowAllTowerUpgradeInfo()
+        {
+            TowerBase[] towers = FindObjectsByType<TowerBase>(FindObjectsSortMode.None);
+            foreach (var tower in towers)
+            {
+                if (tower == null) continue;
+                
+                // Tambahkan TowerUpgradeInfoUI component jika belum ada
+                TowerUpgradeInfoUI infoUI = tower.GetComponent<TowerUpgradeInfoUI>();
+                if (infoUI == null)
+                {
+                    infoUI = tower.gameObject.AddComponent<TowerUpgradeInfoUI>();
+                }
+                
+                infoUI.ShowInfo();
+            }
+        }
+
+        private void HideAllTowerUpgradeInfo()
+        {
+            TowerBase[] towers = FindObjectsByType<TowerBase>(FindObjectsSortMode.None);
+            foreach (var tower in towers)
+            {
+                if (tower == null) continue;
+                
+                TowerUpgradeInfoUI infoUI = tower.GetComponent<TowerUpgradeInfoUI>();
+                if (infoUI != null)
+                {
+                    infoUI.HideInfo();
+                }
+            }
         }
 
         private Vector3 GetMouseWorldPosition(PointerEventData eventData)
