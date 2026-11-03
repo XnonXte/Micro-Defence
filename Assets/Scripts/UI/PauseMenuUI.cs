@@ -146,7 +146,7 @@ namespace MicroDefense.UI
         /// </summary>
         private void DestroyAllTowers()
         {
-            MicroDefense.Towers.TowerBase[] towers = FindObjectsByType<MicroDefense.Towers.TowerBase>(FindObjectsSortMode.None);
+            MicroDefense.Towers.TowerBase[] towers = FindObjectsByType<MicroDefense.Towers.TowerBase>();
             foreach (var tower in towers)
             {
                 Debug.Log($"[PauseMenuUI] Destroying tower: {tower.name}");
@@ -159,7 +159,7 @@ namespace MicroDefense.UI
         /// </summary>
         private void DestroyAllEnemies()
         {
-            MicroDefense.Enemies.EnemyBase[] enemies = FindObjectsByType<MicroDefense.Enemies.EnemyBase>(FindObjectsSortMode.None);
+            MicroDefense.Enemies.EnemyBase[] enemies = FindObjectsByType<MicroDefense.Enemies.EnemyBase>();
             foreach (var enemy in enemies)
             {
                 Debug.Log($"[PauseMenuUI] Destroying enemy: {enemy.name}");

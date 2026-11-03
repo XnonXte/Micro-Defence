@@ -17,6 +17,8 @@ namespace MicroDefense.Core
         [Header("Wave Timing")]
         [SerializeField] private float waveAnnouncementDuration = 2.5f;
         [SerializeField] private float delayBetweenWaves = 3f;
+        [SerializeField] private bool autoStartFirstWave = true;
+        [SerializeField] private float autoStartDelay = 1f;
 
         [Header("Pathing System")]
         [SerializeField] private bool useNavMesh;
@@ -57,6 +59,28 @@ namespace MicroDefense.Core
                 LoadWavesFromResources();
             }
             PublishWaveStatus();
+            
+            // Auto-start first wave jika enabled
+            if (autoStartFirstWave && waves.Count > 0)
+            {
+                StartCoroutine(AutoStartFirstWave());
+            }
+        }
+        
+        private IEnumerator AutoStartFirstWave()
+        {
+            Debug.Log($"[WaveManager] Auto-starting first wave in {autoStartDelay} seconds...");
+            yield return new WaitForSecondsRealtime(autoStartDelay);
+            
+            if (currentWaveIndex == 0 && !isWaveSpawning)
+            {
+                Debug.Log("[WaveManager] Auto-starting wave 1");
+                StartNextWave();
+            }
+            else
+            {
+                Debug.LogWarning($"[WaveManager] Cannot auto-start. currentWaveIndex: {currentWaveIndex}, isWaveSpawning: {isWaveSpawning}");
+            }
         }
 
         private void LoadWavesFromResources()
@@ -88,8 +112,22 @@ namespace MicroDefense.Core
 
         public void StartNextWave()
         {
-            if (isWaveSpawning || currentWaveIndex >= waves.Count) return;
+            Debug.Log($"[WaveManager.StartNextWave] Called. currentWaveIndex: {currentWaveIndex}, waves.Count: {waves.Count}, isWaveSpawning: {isWaveSpawning}");
+            
+            if (isWaveSpawning)
+            {
+                Debug.LogWarning("[WaveManager.StartNextWave] Wave is already spawning. Ignoring.");
+                return;
+            }
+            
+            if (currentWaveIndex >= waves.Count)
+            {
+                Debug.LogWarning($"[WaveManager.StartNextWave] No more waves. currentWaveIndex: {currentWaveIndex}, waves.Count: {waves.Count}");
+                return;
+            }
+            
             completionTriggered = false;
+            Debug.Log($"[WaveManager.StartNextWave] Starting wave {currentWaveIndex + 1}");
             StartCoroutine(RunWave(waves[currentWaveIndex]));
         }
 
@@ -124,9 +162,14 @@ namespace MicroDefense.Core
 
             PublishWaveStatus();
             yield return new WaitForSecondsRealtime(waveAnnouncementDuration);
+            
+            Debug.Log($"[WaveManager.RunWave] Starting spawn for wave {currentWaveIndex + 1}");
             yield return StartCoroutine(SpawnWave(waveData));
-
+            
+            Debug.Log($"[WaveManager.RunWave] Spawn finished. Setting isWaveSpawning = false. activeEnemyCount: {activeEnemyCount}");
             isWaveSpawning = false;
+            
+            Debug.Log($"[WaveManager.RunWave] Calling TryCompleteWave()");
             TryCompleteWave();
         }
 
@@ -142,18 +185,57 @@ namespace MicroDefense.Core
 
         private IEnumerator SpawnWaveMultiPath(WaveDataSO waveData)
         {
+            Debug.Log($"[WaveManager.SpawnWaveMultiPath] Starting spawn for {waveData.pathSpawnGroups.Count} groups");
+            
+            // Track completed spawn groups manually
+            int totalGroups = waveData.pathSpawnGroups.Count;
+            int completedGroups = 0;
+            
             foreach (var group in waveData.pathSpawnGroups)
             {
-                if (group.initialDelay > 0f)
-                    yield return new WaitForSecondsRealtime(group.initialDelay);
+                // Start each group spawn as separate coroutine (parallel spawning)
+                StartCoroutine(SpawnGroupOnPathWithCallback(group, () => {
+                    completedGroups++;
+                    Debug.Log($"[WaveManager.SpawnWaveMultiPath] Group completed. {completedGroups}/{totalGroups}");
+                }));
+            }
+            
+            // Wait for all spawn groups to finish
+            Debug.Log($"[WaveManager.SpawnWaveMultiPath] Waiting for all {totalGroups} groups to complete...");
+            yield return new WaitUntil(() => completedGroups >= totalGroups);
+            Debug.Log($"[WaveManager.SpawnWaveMultiPath] All spawn groups completed!");
+        }
+        
+        private IEnumerator SpawnGroupOnPathWithCallback(PathSpawnGroup group, System.Action onComplete)
+        {
+            yield return StartCoroutine(SpawnGroupOnPath(group));
+            onComplete?.Invoke();
+        }
+        
+        private IEnumerator SpawnGroupOnPath(PathSpawnGroup group)
+        {
+            Debug.Log($"[WaveManager.SpawnGroupOnPath] Starting group: {group.count} enemies on path {group.pathIndex}, initialDelay: {group.initialDelay}s, spawnInterval: {group.spawnInterval}s");
+            
+            // Wait for initial delay
+            if (group.initialDelay > 0f)
+            {
+                Debug.Log($"[WaveManager.SpawnGroupOnPath] Waiting initial delay: {group.initialDelay}s");
+                yield return new WaitForSecondsRealtime(group.initialDelay);
+            }
 
-                for (int i = 0; i < group.count; i++)
+            // Spawn enemies in this group
+            for (int i = 0; i < group.count; i++)
+            {
+                Debug.Log($"[WaveManager.SpawnGroupOnPath] Spawning enemy {i + 1}/{group.count}");
+                SpawnEnemyOnPath(group.enemyData, group.pathIndex);
+                
+                if (i < group.count - 1 && group.spawnInterval > 0f)
                 {
-                    SpawnEnemyOnPath(group.enemyData, group.pathIndex);
-                    if (group.spawnInterval > 0f)
-                        yield return new WaitForSecondsRealtime(group.spawnInterval);
+                    yield return new WaitForSecondsRealtime(group.spawnInterval);
                 }
             }
+            
+            Debug.Log($"[WaveManager.SpawnGroupOnPath] Group finished spawning {group.count} enemies");
         }
 
         private void SpawnEnemyOnPath(EnemyDataSO enemyData, int pathIndex)
@@ -259,9 +341,18 @@ namespace MicroDefense.Core
 
         private IEnumerator StartFollowingWave()
         {
-            Debug.Log($"[WaveManager] Waiting {delayBetweenWaves} seconds before starting next wave...");
-            yield return new WaitForSecondsRealtime(delayBetweenWaves);
-            Debug.Log($"[WaveManager] Delay finished, calling StartNextWave()");
+            Debug.Log($"[WaveManager.StartFollowingWave] Starting coroutine. Will wait {delayBetweenWaves} seconds before next wave...");
+            Debug.Log($"[WaveManager.StartFollowingWave] Time.timeScale: {Time.timeScale}");
+            
+            float elapsedTime = 0f;
+            while (elapsedTime < delayBetweenWaves)
+            {
+                elapsedTime += Time.unscaledDeltaTime;
+                yield return null;
+            }
+            
+            Debug.Log($"[WaveManager.StartFollowingWave] Delay finished after {elapsedTime} seconds. Calling StartNextWave()");
+            Debug.Log($"[WaveManager.StartFollowingWave] currentWaveIndex: {currentWaveIndex}, waves.Count: {waves.Count}, isWaveSpawning: {isWaveSpawning}");
             StartNextWave();
         }
 

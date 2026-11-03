@@ -150,6 +150,9 @@ MonoBehaviour:
   currentHealth: 0
   currentSpeed: 0
   currentArmor: 0
+  hitFlashDuration: 0.15
+  hitFlashColor: {r: 0.5773585, g: 0.5773585, b: 0.5773585, a: 1}
+  searchInChildren: 1
 --- !u!195 &1909550130635965888
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -228,4 +231,6 @@ MonoBehaviour:
   currentHealth: 0
   currentSpeed: 0
   currentArmor: 0
-  spriteRenderer: {fileID: 2327075766329445667}
+  hitFlashDuration: 0.15
+  hitFlashColor: {r: 1, g: 1, b: 1, a: 1}
+  searchInChildren: 1

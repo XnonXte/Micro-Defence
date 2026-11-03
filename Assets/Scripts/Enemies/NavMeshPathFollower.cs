@@ -193,6 +193,31 @@ namespace MicroDefense.Enemies
         }
 
         /// <summary>
+        /// Copy target dan waypoints dari NavMeshPathFollower lain
+        /// Digunakan oleh minion yang di-spawn oleh boss agar follow path yang sama
+        /// </summary>
+        public void CopyTargetFrom(NavMeshPathFollower source)
+        {
+            if (source == null) return;
+            
+            // Copy waypoints jika ada
+            if (source.waypoints != null && source.waypoints.Count > 0)
+            {
+                waypoints = new List<Transform>(source.waypoints);
+                currentWaypointIndex = source.currentWaypointIndex;
+            }
+            
+            // Copy target destination
+            targetDestination = source.targetDestination;
+            
+            // Initialize dengan target baru
+            if (targetDestination != null)
+            {
+                StartCoroutine(InitializeNavMeshWhenReady());
+            }
+        }
+
+        /// <summary>
         /// Dipanggil oleh MacrophageTower saat mulai/berhenti mem-block enemy ini.
         /// Kirim transform tower agar enemy berjalan tepat ke posisinya, bukan berhenti jauh.
         /// </summary>

@@ -54,13 +54,17 @@ namespace MicroDefense.Core
         {
             if (Instance != null && Instance != this)
             {
+                Debug.Log("[AudioManager] Instance already exists. Destroying duplicate.");
                 Destroy(gameObject);
                 return;
             }
 
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            Debug.Log("[AudioManager] Initialized as singleton with DontDestroyOnLoad");
 
+            // Ensure we have audio sources
             if (bgmAudioSource == null)
             {
                 GameObject bgmObj = new GameObject("BGMSource");
@@ -68,6 +72,7 @@ namespace MicroDefense.Core
                 bgmAudioSource = bgmObj.AddComponent<AudioSource>();
                 bgmAudioSource.loop = true;
                 bgmAudioSource.playOnAwake = false;
+                Debug.Log("[AudioManager] Created BGM AudioSource");
             }
 
             if (sfxAudioSource == null)
@@ -76,6 +81,7 @@ namespace MicroDefense.Core
                 sfxObj.transform.SetParent(transform);
                 sfxAudioSource = sfxObj.AddComponent<AudioSource>();
                 sfxAudioSource.playOnAwake = false;
+                Debug.Log("[AudioManager] Created SFX AudioSource");
             }
 
             LoadVolumeSettings();
@@ -91,8 +97,22 @@ namespace MicroDefense.Core
 
         public void PlayBGM(AudioClip clip)
         {
-            if (clip == null) return;
-            if (bgmAudioSource.clip == clip && bgmAudioSource.isPlaying) return;
+            if (clip == null)
+            {
+                Debug.LogWarning("[AudioManager.PlayBGM] Clip is null");
+                return;
+            }
+            
+            if (bgmAudioSource == null)
+            {
+                Debug.LogError("[AudioManager.PlayBGM] bgmAudioSource is null or destroyed!");
+                return;
+            }
+            
+            if (bgmAudioSource.clip == clip && bgmAudioSource.isPlaying)
+            {
+                return; // Already playing this clip
+            }
 
             bgmAudioSource.clip = clip;
             bgmAudioSource.Play();
@@ -100,12 +120,29 @@ namespace MicroDefense.Core
 
         public void StopBGM()
         {
+            if (bgmAudioSource == null)
+            {
+                Debug.LogWarning("[AudioManager.StopBGM] bgmAudioSource is null");
+                return;
+            }
+            
             bgmAudioSource.Stop();
         }
 
         public void PlaySFX(AudioClip clip, float volumeScale = 1f)
         {
-            if (clip == null) return;
+            if (clip == null)
+            {
+                Debug.LogWarning("[AudioManager.PlaySFX] Clip is null");
+                return;
+            }
+            
+            if (sfxAudioSource == null)
+            {
+                Debug.LogError("[AudioManager.PlaySFX] sfxAudioSource is null or destroyed!");
+                return;
+            }
+            
             sfxAudioSource.PlayOneShot(clip, volumeScale);
         }
 
@@ -138,6 +175,12 @@ namespace MicroDefense.Core
         // Volume Controls
         public void SetBGMVolume(float volume)
         {
+            if (bgmAudioSource == null)
+            {
+                Debug.LogError("[AudioManager.SetBGMVolume] bgmAudioSource is null!");
+                return;
+            }
+            
             volume = Mathf.Clamp01(volume);
             bgmAudioSource.volume = volume;
             PlayerPrefs.SetFloat(BGM_VOL_KEY, volume);
@@ -152,6 +195,12 @@ namespace MicroDefense.Core
 
         public void SetSFXVolume(float volume)
         {
+            if (sfxAudioSource == null)
+            {
+                Debug.LogError("[AudioManager.SetSFXVolume] sfxAudioSource is null!");
+                return;
+            }
+            
             volume = Mathf.Clamp01(volume);
             sfxAudioSource.volume = volume;
             PlayerPrefs.SetFloat(SFX_VOL_KEY, volume);
@@ -166,6 +215,12 @@ namespace MicroDefense.Core
 
         private void LoadVolumeSettings()
         {
+            if (bgmAudioSource == null || sfxAudioSource == null)
+            {
+                Debug.LogError("[AudioManager.LoadVolumeSettings] Audio sources are null!");
+                return;
+            }
+            
             float bgmVol = PlayerPrefs.GetFloat(BGM_VOL_KEY, 1f);
             float sfxVol = PlayerPrefs.GetFloat(SFX_VOL_KEY, 1f);
 

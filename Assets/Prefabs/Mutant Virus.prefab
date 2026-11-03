@@ -149,6 +149,9 @@ MonoBehaviour:
   currentHealth: 0
   currentSpeed: 0
   currentArmor: 0
+  hitFlashDuration: 0.15
+  hitFlashColor: {r: 0.5924529, g: 0.5924529, b: 0.5924529, a: 1}
+  searchInChildren: 1
 --- !u!195 &4596760881717650015
 NavMeshAgent:
   m_ObjectHideFlags: 0

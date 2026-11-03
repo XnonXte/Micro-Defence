@@ -87,6 +87,9 @@ namespace MicroDefense.UI
         {
             if (winPanel != null)
             {
+                // Hide semua UI gameplay
+                HideAllGameplayUI();
+                
                 winPanel.SetActive(true);
                 
                 if (winTitleText != null)
@@ -114,6 +117,9 @@ namespace MicroDefense.UI
         {
             if (losePanel != null)
             {
+                // Hide semua UI gameplay
+                HideAllGameplayUI();
+                
                 losePanel.SetActive(true);
                 
                 if (loseTitleText != null)
@@ -131,6 +137,144 @@ namespace MicroDefense.UI
                 {
                     Time.timeScale = 0f; // Fallback jika GameManager tidak ada
                 }
+            }
+        }
+        
+        /// <summary>
+        /// Hide semua UI gameplay (HUD, Tower Shop, dll.)
+        /// JANGAN nonaktifkan Canvas - hanya nonaktifkan komponen UI dan interaksi
+        /// JANGAN touch button GameOver/Win panel!
+        /// </summary>
+        private void HideAllGameplayUI()
+        {
+            // Hide TowerShopUI - disable komponen DAN semua buttons/interaksi
+            TowerShopUI shopUI = FindAnyObjectByType<TowerShopUI>();
+            if (shopUI != null && shopUI.gameObject != gameObject)
+            {
+                // Nonaktifkan komponen TowerShopUI
+                shopUI.enabled = false;
+                
+                // Disable buttons di dalam TowerShopUI TAPI skip button milik GameOverUI
+                Button[] allButtons = shopUI.GetComponentsInChildren<Button>(true);
+                foreach (Button btn in allButtons)
+                {
+                    // Skip button yang ada di winPanel atau losePanel
+                    if (IsButtonInGameOverPanels(btn.transform))
+                        continue;
+                    
+                    btn.interactable = false;
+                    btn.gameObject.SetActive(false);
+                }
+                
+                // Disable semua TowerDragHandler (untuk tower cards)
+                TowerDragHandler[] dragHandlers = shopUI.GetComponentsInChildren<TowerDragHandler>(true);
+                foreach (TowerDragHandler handler in dragHandlers)
+                {
+                    handler.enabled = false;
+                    handler.gameObject.SetActive(false);
+                }
+                
+                // Disable TowerUpgradeDragHandler (upgrade tool / pipet)
+                TowerUpgradeDragHandler[] upgradeHandlers = shopUI.GetComponentsInChildren<TowerUpgradeDragHandler>(true);
+                foreach (TowerUpgradeDragHandler handler in upgradeHandlers)
+                {
+                    handler.enabled = false;
+                    handler.gameObject.SetActive(false);
+                }
+                
+                // Hide semua TMP_Text gameplay (plasma, wave, health, dll)
+                TMP_Text[] allTexts = shopUI.GetComponentsInChildren<TMP_Text>(true);
+                foreach (TMP_Text txt in allTexts)
+                {
+                    // Skip text yang ada di GameOver panels
+                    if (IsButtonInGameOverPanels(txt.transform))
+                        continue;
+                    
+                    txt.gameObject.SetActive(false);
+                }
+                
+                // Hide semua Image components (wadah plasma, icons, dll)
+                UnityEngine.UI.Image[] allImages = shopUI.GetComponentsInChildren<UnityEngine.UI.Image>(true);
+                foreach (UnityEngine.UI.Image img in allImages)
+                {
+                    // Skip images yang ada di GameOver panels
+                    if (IsButtonInGameOverPanels(img.transform))
+                        continue;
+                    
+                    img.gameObject.SetActive(false);
+                }
+                
+                // Hide panel-panel spesifik
+                HideChildPanel(shopUI.transform, "ShopPanel");
+                HideChildPanel(shopUI.transform, "HUD");
+                HideChildPanel(shopUI.transform, "InfoPanel");
+                HideChildPanel(shopUI.transform, "TowerCards");
+                HideChildPanel(shopUI.transform, "WaveButton");
+                HideChildPanel(shopUI.transform, "PlasmaPanel");
+                HideChildPanel(shopUI.transform, "Plasma");
+                HideChildPanel(shopUI.transform, "LeaksPanel");
+                HideChildPanel(shopUI.transform, "Leaks");
+                HideChildPanel(shopUI.transform, "WaveStatusPanel");
+                HideChildPanel(shopUI.transform, "WaveStatus");
+                HideChildPanel(shopUI.transform, "UpgradeTool");
+                HideChildPanel(shopUI.transform, "Pipet");
+            }
+            
+            // Hide SimpleUI - disable komponennya
+            if (SimpleUI.Instance != null && SimpleUI.Instance.gameObject != gameObject)
+            {
+                SimpleUI.Instance.enabled = false;
+            }
+            
+            // Hide CompleteUIManager - disable komponennya
+            if (CompleteUIManager.Instance != null && CompleteUIManager.Instance.gameObject != gameObject)
+            {
+                CompleteUIManager.Instance.enabled = false;
+            }
+            
+            // Hide PauseController (pause button)
+            PauseController pauseController = FindAnyObjectByType<PauseController>();
+            if (pauseController != null && pauseController.gameObject != gameObject)
+            {
+                pauseController.gameObject.SetActive(false);
+            }
+            
+            // Hide PauseMenuUI panel
+            PauseMenuUI pauseMenuUI = FindAnyObjectByType<PauseMenuUI>();
+            if (pauseMenuUI != null && pauseMenuUI.gameObject != gameObject)
+            {
+                pauseMenuUI.gameObject.SetActive(false);
+            }
+        }
+
+        /// <summary>
+        /// Check apakah button ada di dalam winPanel atau losePanel
+        /// </summary>
+        private bool IsButtonInGameOverPanels(Transform buttonTransform)
+        {
+            Transform current = buttonTransform;
+            while (current != null)
+            {
+                // Cek apakah parent adalah winPanel atau losePanel
+                if (winPanel != null && current.gameObject == winPanel)
+                    return true;
+                if (losePanel != null && current.gameObject == losePanel)
+                    return true;
+                
+                current = current.parent;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Helper untuk hide child panel dengan nama tertentu
+        /// </summary>
+        private void HideChildPanel(Transform parent, string childName)
+        {
+            Transform child = parent.Find(childName);
+            if (child != null && child.gameObject != winPanel && child.gameObject != losePanel)
+            {
+                child.gameObject.SetActive(false);
             }
         }
 
@@ -248,7 +392,7 @@ namespace MicroDefense.UI
         private void DestroyAllTowers()
         {
             // Cari semua object dengan komponen TowerBase
-            MicroDefense.Towers.TowerBase[] towers = FindObjectsByType<MicroDefense.Towers.TowerBase>(FindObjectsSortMode.None);
+            MicroDefense.Towers.TowerBase[] towers = FindObjectsByType<MicroDefense.Towers.TowerBase>();
             foreach (var tower in towers)
             {
                 Debug.Log($"[GameOverUI] Destroying tower: {tower.name}");
@@ -261,7 +405,7 @@ namespace MicroDefense.UI
         /// </summary>
         private void DestroyAllEnemies()
         {
-            MicroDefense.Enemies.EnemyBase[] enemies = FindObjectsByType<MicroDefense.Enemies.EnemyBase>(FindObjectsSortMode.None);
+            MicroDefense.Enemies.EnemyBase[] enemies = FindObjectsByType<MicroDefense.Enemies.EnemyBase>();
             foreach (var enemy in enemies)
             {
                 Debug.Log($"[GameOverUI] Destroying enemy: {enemy.name}");
@@ -274,13 +418,20 @@ namespace MicroDefense.UI
         /// </summary>
         private void OnNextLevelClicked()
         {
-            Time.timeScale = 1f; // Resume time
+            Debug.Log("[GameOverUI] Next Level button clicked");
+            
+            // PENTING: Destroy semua persistent objects untuk clean state
+            DestroyAllPersistentObjects();
+            
+            // Resume time sebelum load scene
+            Time.timeScale = 1f;
             
             int nextSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
             
             // Check if next scene exists
             if (nextSceneIndex < SceneManager.sceneCountInBuildSettings)
             {
+                Debug.Log($"[GameOverUI] Loading next level (scene index {nextSceneIndex})");
                 SceneManager.LoadScene(nextSceneIndex);
             }
             else

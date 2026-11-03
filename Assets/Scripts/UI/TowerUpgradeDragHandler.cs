@@ -241,7 +241,7 @@ namespace MicroDefense.UI
 
         private void ShowAllTowerUpgradeInfo()
         {
-            TowerBase[] towers = FindObjectsByType<TowerBase>(FindObjectsSortMode.None);
+            TowerBase[] towers = FindObjectsByType<TowerBase>();
             foreach (var tower in towers)
             {
                 if (tower == null) continue;
@@ -259,7 +259,7 @@ namespace MicroDefense.UI
 
         private void HideAllTowerUpgradeInfo()
         {
-            TowerBase[] towers = FindObjectsByType<TowerBase>(FindObjectsSortMode.None);
+            TowerBase[] towers = FindObjectsByType<TowerBase>();
             foreach (var tower in towers)
             {
                 if (tower == null) continue;

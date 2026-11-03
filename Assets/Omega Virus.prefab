@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 1909550130635965889}
   - component: {fileID: 9000000000000000012}
   - component: {fileID: 9000000000000000013}
+  - component: {fileID: -9194945402995635516}
   m_Layer: 0
   m_Name: Omega Virus
   m_TagString: Untagged
@@ -85,7 +86,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 33
   m_MaskInteraction: 0
   m_Sprite: {fileID: -6407368499309166625, guid: 181d75043febff049b8161b2a5e5bfa6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -141,7 +142,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2133518467374252110}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9ed22bc5d44d6ab4cb39b0983da8baeb, type: 3}
   m_Name: 
@@ -151,7 +152,7 @@ MonoBehaviour:
   currentSpeed: 0
   currentArmor: 0
   hitFlashDuration: 0.15
-  hitFlashColor: {r: 1, g: 1, b: 1, a: 1}
+  hitFlashColor: {r: 0.6301887, g: 0.6301887, b: 0.6301887, a: 1}
   searchInChildren: 1
 --- !u!195 &1909550130635965888
 NavMeshAgent:
@@ -233,3 +234,37 @@ MonoBehaviour:
   - {fileID: -4506207796401736706, guid: c6587f99c3b8d444fa6dde8ffb96b6b5, type: 3}
   - {fileID: 3955263505189334413, guid: dcd1fdf8b4284144d8b7fc8070003e55, type: 3}
   frameDuration: 0.1
+--- !u!114 &-9194945402995635516
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133518467374252110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caf071646af9d6f439e47ed2b9ede192, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Enemies.OmegaVirus
+  enemyData: {fileID: 11400000, guid: 6122d1e836f96b54cad01bc20b969ec9, type: 2}
+  currentHealth: 0
+  currentSpeed: 0
+  currentArmor: 0
+  hitFlashDuration: 0.15
+  hitFlashColor: {r: 1, g: 1, b: 1, a: 1}
+  searchInChildren: 1
+  enableSpawning: 1
+  minionsPerSpawn: 3
+  spawnInterval: 15
+  spawnRadius: 5
+  healthThresholds:
+  - 0.75
+  - 0.5
+  - 0.25
+  minionTypes:
+  - {fileID: 11400000, guid: 7c4bbf846709e1d46bb26b2392621bc0, type: 2}
+  - {fileID: 11400000, guid: e42ca930f26d5834cb90394ca88395ac, type: 2}
+  - {fileID: 11400000, guid: 9691950c6f8a33c4f93ff290661e852e, type: 2}
+  spawnEffectPrefab: {fileID: 0}
+  spawnEffectDuration: 0.5
+  showDebugLogs: 1
