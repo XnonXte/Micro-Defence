@@ -39,7 +39,7 @@ MonoBehaviour:
   - tierLevel: 2
     tierName: Level 2
     upgradeCost: 75
-    damage: 37
+    damage: 50
     attackSpeed: 2
     range: 15
     maxHealth: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
   - tierLevel: 3
     tierName: Level 3
     upgradeCost: 100
-    damage: 50
+    damage: 75
     attackSpeed: 3
     range: 20
     maxHealth: 0
