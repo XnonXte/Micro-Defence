@@ -87,6 +87,9 @@ namespace MicroDefense.UI
         {
             if (winPanel != null)
             {
+                // Unlock next level when current level is won (1->2, 2->3, ..., 4->5)
+                LevelProgress.UnlockNextFromCurrentScene();
+                
                 // Hide semua UI gameplay
                 HideAllGameplayUI();
                 

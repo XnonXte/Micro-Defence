@@ -335,6 +335,9 @@ namespace MicroDefense.Core
                 Debug.Log($"[WaveManager] All waves completed!");
                 OnAllWavesCompleted?.Invoke();
                 
+                // Unlock next level progression (1->2, 2->3, ..., 4->5)
+                LevelProgress.UnlockNextFromCurrentScene();
+                
                 // Play victory SFX
                 AudioManager.Instance?.PlayGameOver();
                 

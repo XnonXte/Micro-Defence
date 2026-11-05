@@ -30,7 +30,7 @@ MonoBehaviour:
     count: 8
     spawnInterval: 2
     initialDelay: 0
-  - pathIndex: 1
+  - pathIndex: 0
     enemyData: {fileID: 11400000, guid: 3e46d20898be3684486e7b4a729903e1, type: 2}
     count: 8
     spawnInterval: 2

@@ -248,7 +248,11 @@ public sealed class SimpleUI : MonoBehaviour
 
     private void UpdateState(GameState state)
     {
-        if (state == GameState.Victory) ShowResult("VICTORY!", "All waves completed", true);
+        if (state == GameState.Victory)
+        {
+            LevelProgress.UnlockNextFromCurrentScene();
+            ShowResult("VICTORY!", "All waves completed", true);
+        }
         if (state == GameState.Defeat) ShowResult("DEFEAT", "Base destroyed", false);
         if (state == GameState.Preparation || state == GameState.MainMenu)
             HideResult();

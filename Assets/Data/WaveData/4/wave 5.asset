@@ -20,17 +20,17 @@ MonoBehaviour:
     count: 9
     spawnInterval: 3
     initialDelay: 3
-  - pathIndex: 1
+  - pathIndex: 0
     enemyData: {fileID: 11400000, guid: 9691950c6f8a33c4f93ff290661e852e, type: 2}
     count: 9
     spawnInterval: 3
     initialDelay: 3
-  - pathIndex: 1
+  - pathIndex: 0
     enemyData: {fileID: 11400000, guid: e42ca930f26d5834cb90394ca88395ac, type: 2}
     count: 9
     spawnInterval: 3
     initialDelay: 3
-  - pathIndex: 1
+  - pathIndex: 0
     enemyData: {fileID: 11400000, guid: 3e46d20898be3684486e7b4a729903e1, type: 2}
     count: 9
     spawnInterval: 3
