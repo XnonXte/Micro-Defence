@@ -16,10 +16,10 @@ MonoBehaviour:
   enemyName: 
   enemyPrefab: {fileID: 2133518467374252110, guid: 90a7946d813a7064c8de782e79eec714, type: 3}
   baseHealth: 100
-  moveSpeed: 4
+  moveSpeed: 3
   flatArmor: 0
   damageToCell: 15
-  plasmaReward: 10
+  plasmaReward: 100
   swarmLives: 3
   swarmHealthPerLife: 100
   swarmSpriteLife1: {fileID: -6508878321268937535, guid: 31ba5ae2495908d4e8802786df06fcd4, type: 3}

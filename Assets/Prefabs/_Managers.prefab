@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c8240523c8c0974ab7cb61e81c52345, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Core.LeakManager
-  maxLeakCapacity: 20
+  maxLeakCapacity: 150
   currentLeakCount: 0
 --- !u!114 &8753810485399564475
 MonoBehaviour:
@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1810789bf35edb440b232d245f1e4bb0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Core.PlasmaManager
-  startingPlasma: 300
+  startingPlasma: 50
   dropScale: 1
 --- !u!114 &5297622731327122219
 MonoBehaviour:

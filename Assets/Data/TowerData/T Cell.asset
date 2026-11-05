@@ -15,7 +15,7 @@ MonoBehaviour:
   towerType: 2
   towerName: t cell
   description: 
-  baseCost: 60
+  baseCost: 300
   towerPrefab: {fileID: 2222918456178901736, guid: e74bace94dcd88e4ead0d32efdccc337, type: 3}
   icon: {fileID: 6483804897575239260, guid: d8abde803c536044994b0b3f3b5905ca, type: 3}
   projectileSprite: {fileID: -2585858759159117228, guid: a463f619f7e70d0468e8d893a0ea720b, type: 3}
@@ -26,11 +26,33 @@ MonoBehaviour:
     lifetime: 10
   tiers:
   - tierLevel: 1
-    tierName: T-Cell Tier 1
+    tierName: Level 1
     upgradeCost: 0
-    damage: 20
+    damage: 50
     attackSpeed: 0.5
-    range: 30000
+    range: 15
+    maxHealth: 100
+    damageReductionPercent: 0
+    specialAbility: 0
+    specialEffectMagnitude: 0
+    specialEffectDuration: 0
+  - tierLevel: 2
+    tierName: Level 2
+    upgradeCost: 300
+    damage: 100
+    attackSpeed: 1
+    range: 30
+    maxHealth: 100
+    damageReductionPercent: 0
+    specialAbility: 0
+    specialEffectMagnitude: 0
+    specialEffectDuration: 0
+  - tierLevel: 3
+    tierName: Level 3
+    upgradeCost: 400
+    damage: 150
+    attackSpeed: 1.5
+    range: 45
     maxHealth: 100
     damageReductionPercent: 0
     specialAbility: 0

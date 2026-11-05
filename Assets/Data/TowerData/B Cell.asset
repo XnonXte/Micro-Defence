@@ -15,7 +15,7 @@ MonoBehaviour:
   towerType: 0
   towerName: B Cell
   description: 
-  baseCost: 60
+  baseCost: 50
   towerPrefab: {fileID: 2535548714839134108, guid: 4cf4d35f90aef95499d3920d3f58e409, type: 3}
   icon: {fileID: 7482667652216324306, guid: c4b91cc618477cb4780ed63b560c5869, type: 3}
   projectileSprite: {fileID: -6217473919847561577, guid: 46fd7a67639ff6047afa6d64724110a5, type: 3}
@@ -26,33 +26,33 @@ MonoBehaviour:
     lifetime: 10
   tiers:
   - tierLevel: 1
-    tierName: 
+    tierName: Level 1
     upgradeCost: 0
-    damage: 20
+    damage: 25
     attackSpeed: 1
-    range: 30000
+    range: 10
     maxHealth: 0
     damageReductionPercent: 3000
     specialAbility: 0
     specialEffectMagnitude: 0
     specialEffectDuration: 0
   - tierLevel: 2
-    tierName: 
-    upgradeCost: 50
-    damage: 40
+    tierName: Level 2
+    upgradeCost: 75
+    damage: 37
     attackSpeed: 2
-    range: 30000
+    range: 15
     maxHealth: 0
     damageReductionPercent: 3000
     specialAbility: 0
     specialEffectMagnitude: 0
     specialEffectDuration: 0
   - tierLevel: 3
-    tierName: 
-    upgradeCost: 0
-    damage: 20
-    attackSpeed: 0.5
-    range: 30000
+    tierName: Level 3
+    upgradeCost: 100
+    damage: 50
+    attackSpeed: 3
+    range: 20
     maxHealth: 0
     damageReductionPercent: 3000
     specialAbility: 0

@@ -15,8 +15,8 @@ MonoBehaviour:
   enemyType: 0
   enemyName: Common Virus
   enemyPrefab: {fileID: 5564637182516725744, guid: fd8226d00922d9f4ca929491bedc600b, type: 3}
-  baseHealth: 100
-  moveSpeed: 4
+  baseHealth: 75
+  moveSpeed: 2
   flatArmor: 0
   damageToCell: 15
   plasmaReward: 10
