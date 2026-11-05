@@ -5302,6 +5302,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 6246689345267363698, guid: 5c67e5b9dec444541a412b73bd8580d3, type: 3}
+      propertyPath: towerCostFontSize
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 6391399345682286561, guid: 5c67e5b9dec444541a412b73bd8580d3, type: 3}
       propertyPath: m_IsActive
       value: 1

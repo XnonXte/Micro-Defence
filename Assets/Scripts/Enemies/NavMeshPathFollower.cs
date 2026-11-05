@@ -16,12 +16,21 @@ namespace MicroDefense.Enemies
 
         [Tooltip("Radius deteksi enemy di depan. Harus >= minimumSpacing.")]
         [SerializeField] private float spacingCheckRadius = 1.0f;
+        
+        [Tooltip("Saat sedang menyerang Macro, abaikan spacing check agar bisa menempel lebih dekat.")]
+        [SerializeField] private bool ignoreSpacingWhenBlocked = true;
 
         [Tooltip("Layer mask enemy. Set ke layer 'Enemy' di Inspector.")]
         [SerializeField] private LayerMask enemyLayer;
 
         [Tooltip("Jarak dari blocker tower agar enemy berhenti (biasanya = radius collider blocker).")]
         [SerializeField] private float stopDistanceFromBlocker = 0.5f;
+        
+        [Tooltip("Jarak minimum saat blocked agar virus bisa sangat dekat ke Macro (override stop distance).")]
+        [SerializeField] private float blockedStopDistance = 0.05f;
+        
+        [Tooltip("Saat blocked, paksa enemy mendekat ke Macro meski ada spacing check (handled by priority).")]
+        [SerializeField] private bool tightenStopWhenBlocked = true;
 
         private NavMeshAgent agent;
         private EnemyBase enemy;
@@ -45,6 +54,7 @@ namespace MicroDefense.Enemies
 
             agent.updateRotation = false;
             agent.updateUpAxis = false;
+            agent.stoppingDistance = 0f;
 
             // Matikan avoidance antar agent — spacing dijaga manual
             agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
@@ -228,12 +238,14 @@ namespace MicroDefense.Enemies
             if (blocked && blockerTransform != null && agent != null)
             {
                 // Arahkan agent ke posisi blocker agar enemy jalan maju ke tower
-                agent.isStopped = false;
+                if (agent.isOnNavMesh) agent.isStopped = false;
+                agent.stoppingDistance = 0f;
                 agent.SetDestination(blockerTransform.position);
             }
             else if (!blocked && agent != null)
             {
-                // BARU: Resume pathfinding ke original target saat unblock
+                // Resume pathfinding ke original target saat unblock
+                agent.stoppingDistance = 0f;
                 ResumePathfinding();
             }
         }
@@ -262,9 +274,12 @@ namespace MicroDefense.Enemies
             {
                 if (currentBlocker != null)
                 {
-                    float distToBlocker = Vector3.Distance(transform.position, currentBlocker.position);
+                    Vector3 toBlocker = currentBlocker.position - transform.position;
+                    toBlocker.z = 0f;
+                    float distToBlocker = toBlocker.magnitude;
+                    float stopDist = tightenStopWhenBlocked ? Mathf.Min(stopDistanceFromBlocker, blockedStopDistance) : stopDistanceFromBlocker;
 
-                    if (distToBlocker <= stopDistanceFromBlocker)
+                    if (distToBlocker <= stopDist)
                     {
                         // Sudah cukup dekat → freeze total
                         if (agent.isOnNavMesh)
@@ -279,7 +294,16 @@ namespace MicroDefense.Enemies
                         if (agent.isOnNavMesh)
                         {
                             agent.isStopped = false;
+                            agent.stoppingDistance = 0f;
                             agent.SetDestination(currentBlocker.position);
+                        }
+                        
+                        // Fallback nudge: jika NavMesh path/avoidance bikin macet jauh dari Macro,
+                        // dorong sedikit mendekat (tanpa mengabaikan NavMesh secara total).
+                        if (!agent.pathPending && agent.velocity.sqrMagnitude < 0.0001f && distToBlocker > stopDist + 0.05f)
+                        {
+                            Vector3 dir = toBlocker.normalized;
+                            transform.position += dir * Mathf.Min(enemy.currentSpeed, 2f) * Time.deltaTime;
                         }
                     }
                 }

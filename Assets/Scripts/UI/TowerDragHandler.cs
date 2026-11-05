@@ -13,6 +13,10 @@ namespace MicroDefense.UI
     {
         [Header("Tower Data")]
         [SerializeField] private TowerDataSO towerData;
+        
+        [Header("SFX Cooldown")]
+        [SerializeField] private float hoverCooldown = 0.1f;
+        private float lastHoverTime = -999f;
 
         public void SetTowerData(TowerDataSO data)
         {
@@ -21,10 +25,15 @@ namespace MicroDefense.UI
 
         public void OnPointerEnter(PointerEventData eventData)
         {
+            // Prevent hover SFX spam
+            if (Time.unscaledTime - lastHoverTime < hoverCooldown)
+                return;
+            
             // Play card hover SFX
             if (AudioManager.Instance != null)
             {
                 AudioManager.Instance.PlayCardHover();
+                lastHoverTime = Time.unscaledTime;
             }
         }
 

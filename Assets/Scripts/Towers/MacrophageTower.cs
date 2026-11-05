@@ -15,7 +15,7 @@ namespace MicroDefense.Towers
         [SerializeField] private float aimRotationOffset = 90f;
         
         [Header("Block Range")]
-        [SerializeField] private float minBlockRange = 2f; // Range minimum untuk block enemy (lebih dekat)
+        [SerializeField] private float minBlockRange = 1.2f; // Mulai block lebih dekat ke Macro (deteksi awal)
 
         [Header("Macrophage Status")]
         public float currentHealth;
@@ -66,7 +66,7 @@ namespace MicroDefense.Towers
         public override void ApplyTierStats(int tierLevel)
         {
             base.ApplyTierStats(tierLevel);
-            // Use minBlockRange instead of hardcoded 5f
+            // Use minBlockRange instead of hardcoded 5f (kept small so virus approaches closer)
             if (currentTierStats.range < minBlockRange)
                 currentTierStats.range = minBlockRange;
             maxHealth = currentTierStats.maxHealth;

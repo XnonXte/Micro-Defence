@@ -531,6 +531,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UI
       objectReference: {fileID: 0}
+    - target: {fileID: 6246689345267363698, guid: 5c67e5b9dec444541a412b73bd8580d3, type: 3}
+      propertyPath: towerCostFontSize
+      value: 30
+      objectReference: {fileID: 0}
     - target: {fileID: 6391399345682286561, guid: 5c67e5b9dec444541a412b73bd8580d3, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -780,8 +784,13 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+<<<<<<< Updated upstream
   hoverCooldown: 0.1
   clickCooldown: 0.05
+=======
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
+>>>>>>> Stashed changes
 --- !u!114 &56074185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -798,8 +807,13 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+<<<<<<< Updated upstream
   hoverCooldown: 0.1
   clickCooldown: 0.05
+=======
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
+>>>>>>> Stashed changes
 --- !u!114 &56074186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -816,8 +830,13 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+<<<<<<< Updated upstream
   hoverCooldown: 0.1
   clickCooldown: 0.05
+=======
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
+>>>>>>> Stashed changes
 --- !u!114 &56074187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -834,8 +853,13 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+<<<<<<< Updated upstream
   hoverCooldown: 0.1
   clickCooldown: 0.05
+=======
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
+>>>>>>> Stashed changes
 --- !u!114 &56074188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -852,8 +876,13 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+<<<<<<< Updated upstream
   hoverCooldown: 0.1
   clickCooldown: 0.05
+=======
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
+>>>>>>> Stashed changes
 --- !u!4 &113564013 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7106149713932556153, guid: 2be9df5ec9cec4e4f98b99822e392b9a, type: 3}
@@ -2757,8 +2786,13 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+<<<<<<< Updated upstream
   hoverCooldown: 0.1
   clickCooldown: 0.05
+=======
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
+>>>>>>> Stashed changes
 --- !u!1001 &564311815
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2944,8 +2978,13 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+<<<<<<< Updated upstream
   hoverCooldown: 0.1
   clickCooldown: 0.05
+=======
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
+>>>>>>> Stashed changes
 --- !u!4 &768938773 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8488685036496862249, guid: 384091fa30d557047959435fb9aeee47, type: 3}
@@ -3183,8 +3222,13 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+<<<<<<< Updated upstream
   hoverCooldown: 0.1
   clickCooldown: 0.05
+=======
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
+>>>>>>> Stashed changes
 --- !u!114 &1350425076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3201,8 +3245,13 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+<<<<<<< Updated upstream
   hoverCooldown: 0.1
   clickCooldown: 0.05
+=======
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
+>>>>>>> Stashed changes
 --- !u!213 &1402991696
 Sprite:
   serializedVersion: 2
@@ -3659,8 +3708,13 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+<<<<<<< Updated upstream
   hoverCooldown: 0.1
   clickCooldown: 0.05
+=======
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
+>>>>>>> Stashed changes
 --- !u!1 &1565312649
 GameObject:
   m_ObjectHideFlags: 0
@@ -3849,8 +3903,13 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+<<<<<<< Updated upstream
   hoverCooldown: 0.1
   clickCooldown: 0.05
+=======
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
+>>>>>>> Stashed changes
 --- !u!114 &1690847175 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4440826008167048838, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
@@ -4165,8 +4224,13 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+<<<<<<< Updated upstream
   hoverCooldown: 0.1
   clickCooldown: 0.05
+=======
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
+>>>>>>> Stashed changes
 --- !u!4 &2124925684 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7106149713932556153, guid: 2be9df5ec9cec4e4f98b99822e392b9a, type: 3}
