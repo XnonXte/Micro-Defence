@@ -7,7 +7,7 @@ AnimationClip:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: MutantVirusIdle
-  serializedVersion: 7
+  serializedVersion: 8
   m_Legacy: 0
   m_Compressed: 0
   m_UseHighQualityCurve: 1
@@ -22,16 +22,17 @@ AnimationClip:
     curve:
     - time: 0
       value: {fileID: -4489387533423774934, guid: 32d6e4dea64fd0444bfd6278da1e494e, type: 3}
-    - time: 0.25
+    - time: 2
       value: {fileID: 7386322350161517415, guid: e254bdaa1b4d75749989734659c9b182, type: 3}
-    - time: 0.5
+    - time: 2.25
       value: {fileID: 3396033491488470086, guid: ec8ea9c6b67e9134ebba2d99d674221c, type: 3}
-    - time: 0.75
+    - time: 2.5
       value: {fileID: -7170664454357132114, guid: f4608c891181db24fb9d9938db650a3a, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
     script: {fileID: 0}
+    flags: 2
   m_SampleRate: 4
   m_WrapMode: 0
   m_Bounds:
@@ -48,6 +49,7 @@ AnimationClip:
       isPPtrCurve: 1
       isIntCurve: 0
       isSerializeReferenceCurve: 0
+      metaData: 0
     pptrCurveMapping:
     - {fileID: -4489387533423774934, guid: 32d6e4dea64fd0444bfd6278da1e494e, type: 3}
     - {fileID: 7386322350161517415, guid: e254bdaa1b4d75749989734659c9b182, type: 3}
@@ -58,7 +60,7 @@ AnimationClip:
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 1
+    m_StopTime: 2.75
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
