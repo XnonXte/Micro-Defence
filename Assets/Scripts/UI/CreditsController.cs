@@ -48,6 +48,10 @@ public class CreditsController : MonoBehaviour
     [Header("End Text")]
     [SerializeField] private string endText = "Thank you for playing!";
     [SerializeField] private Color endTextColor = Color.cyan;
+    
+    [Header("Font Settings")]
+    [SerializeField] private TMP_FontAsset customFont; // Assign Alata font here
+    [SerializeField] private bool useCustomFont = true;
 
     private void Start()
     {
@@ -141,6 +145,12 @@ public class CreditsController : MonoBehaviour
         TextMeshProUGUI tmpText = textObj.AddComponent<TextMeshProUGUI>();
         tmpText.text = text;
         tmpText.fontSize = fontSize;
+        
+        // Apply custom font (Alata) if available
+        if (useCustomFont && customFont != null)
+        {
+            tmpText.font = customFont;
+        }
         
         // Convert FontStyle to FontStyles
         TMPro.FontStyles tmpFontStyle = TMPro.FontStyles.Normal;

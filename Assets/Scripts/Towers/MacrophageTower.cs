@@ -13,10 +13,17 @@ namespace MicroDefense.Towers
         [Header("Aiming Rotation")]
         [SerializeField] private bool rotateTowardTarget = true;
         [SerializeField] private float aimRotationOffset = 90f;
+        
+        [Header("Block Range")]
+        [SerializeField] private float minBlockRange = 2f; // Range minimum untuk block enemy (lebih dekat)
 
         [Header("Macrophage Status")]
         public float currentHealth;
         public float maxHealth;
+        
+        [Header("Hit Effect (Auto-Setup)")]
+        [SerializeField] private bool enableHitEffect = true;
+        private MacrophageHitEffect hitEffect;
 
         private List<EnemyBase> currentlyBlockedEnemies = new List<EnemyBase>();
         private Vector3Int placedAtCell; // Track cell position untuk cleanup
@@ -28,6 +35,25 @@ namespace MicroDefense.Towers
             maxHealth = currentTierStats.maxHealth;
             currentHealth = maxHealth;
             PlayIdleAnimation();
+            
+            // Auto-setup hit effect jika enabled
+            if (enableHitEffect)
+            {
+                SetupHitEffect();
+            }
+        }
+        
+        /// <summary>
+        /// Setup hit effect untuk visual feedback saat kena damage
+        /// </summary>
+        private void SetupHitEffect()
+        {
+            hitEffect = GetComponent<MacrophageHitEffect>();
+            if (hitEffect == null)
+            {
+                hitEffect = gameObject.AddComponent<MacrophageHitEffect>();
+                Debug.Log("[MacrophageTower] MacrophageHitEffect auto-added");
+            }
         }
 
         /// <summary>Plays the Idle animation state (Blink only for Macrophage).</summary>
@@ -40,8 +66,9 @@ namespace MicroDefense.Towers
         public override void ApplyTierStats(int tierLevel)
         {
             base.ApplyTierStats(tierLevel);
-            if (currentTierStats.range < 5f)
-                currentTierStats.range = 5f;
+            // Use minBlockRange instead of hardcoded 5f
+            if (currentTierStats.range < minBlockRange)
+                currentTierStats.range = minBlockRange;
             maxHealth = currentTierStats.maxHealth;
             currentHealth = maxHealth;
         }

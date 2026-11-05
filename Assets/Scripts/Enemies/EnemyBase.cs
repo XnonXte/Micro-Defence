@@ -22,6 +22,10 @@ namespace MicroDefense.Enemies
         [SerializeField] private float hitFlashDuration = 0.15f;
         [SerializeField] private Color hitFlashColor = Color.white;
         [SerializeField] private bool searchInChildren = true;
+        
+        [Header("Attack Macrophage Effect")]
+        [SerializeField] private bool enableAttackEffect = true;
+        private EnemyAttackMacrophageEffect attackEffect;
 
         // Status Effects
         private bool isSlowed;
@@ -69,6 +73,25 @@ namespace MicroDefense.Enemies
             else
             {
                 Debug.LogWarning($"[EnemyBase.Awake] No SpriteRenderer found on {gameObject.name} or its children!");
+            }
+            
+            // Auto-setup attack Macrophage effect
+            if (enableAttackEffect)
+            {
+                SetupAttackEffect();
+            }
+        }
+        
+        /// <summary>
+        /// Setup continuous attack effect untuk visual feedback saat menyerang Macrophage
+        /// </summary>
+        private void SetupAttackEffect()
+        {
+            attackEffect = GetComponent<EnemyAttackMacrophageEffect>();
+            if (attackEffect == null)
+            {
+                attackEffect = gameObject.AddComponent<EnemyAttackMacrophageEffect>();
+                Debug.Log($"[EnemyBase] EnemyAttackMacrophageEffect auto-added to {gameObject.name}");
             }
         }
 

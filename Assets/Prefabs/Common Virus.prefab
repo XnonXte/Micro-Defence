@@ -128,6 +128,7 @@ GameObject:
   - component: {fileID: 7001436780044945084}
   - component: {fileID: 767361761122642829}
   - component: {fileID: 6575654019037661272}
+  - component: {fileID: 251989167964120777}
   m_Layer: 0
   m_Name: Common Virus
   m_TagString: Untagged
@@ -246,3 +247,27 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   stopDistanceFromBlocker: 0.5
+--- !u!114 &251989167964120777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5564637182516725744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26342d63a031a4e428e9dd506cacbb5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Enemies.EnemyHitEffect
+  enableShake: 1
+  shakeDuration: 0.15
+  shakeIntensity: 0.08
+  shakeSpeed: 40
+  enableRotationShake: 1
+  rotationShakeAmount: 8
+  enableScalePulse: 1
+  scalePulseAmount: 0.08
+  scalePulseDuration: 0.12
+  enableColorFlash: 1
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashDuration: 0.1

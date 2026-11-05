@@ -33,11 +33,16 @@
             [SerializeField] private RectTransform leaksPanel;
             [SerializeField] private RectTransform waveStatusPanel;
 
-            [Header("Tower Card UI")]
-            [SerializeField] private TMP_Text[] towerNameTexts = new TMP_Text[3];
-            [SerializeField] private TMP_Text[] towerCostTexts = new TMP_Text[3];
-            [SerializeField] private Button[] towerUpgradeButtons = new Button[3];
-            [SerializeField] private TMP_Text leaksLevelText;
+    [Header("Tower Card UI")]
+    [SerializeField] private TMP_Text[] towerNameTexts = new TMP_Text[3];
+    [SerializeField] private TMP_Text[] towerCostTexts = new TMP_Text[3];
+    [SerializeField] private Button[] towerUpgradeButtons = new Button[3];
+    [SerializeField] private TMP_Text leaksLevelText;
+    
+    [Header("Font Size Settings")]
+    [SerializeField] private float towerNameFontSize = 18f;
+    [SerializeField] private float towerCostFontSize = 16f;
+    [SerializeField] private float upgradeCostFontSize = 14f;
 
             [Header("Wave Announcement UI")]
             [SerializeField] private GameObject waveAnnouncementPanel;
@@ -171,34 +176,48 @@
                 RefreshTowerCards();
             }
 
-            private void RefreshTowerCards()
+    private void RefreshTowerCards()
+    {
+        TowerDataSO[] data = { bCellData, macrophageData, tCellData };
+        for (int i = 0; i < data.Length; i++)
+        {
+            TowerDataSO tower = data[i];
+            
+            // Update tower name
+            if (towerNameTexts != null && i < towerNameTexts.Length && towerNameTexts[i] != null)
             {
-                TowerDataSO[] data = { bCellData, macrophageData, tCellData };
-                for (int i = 0; i < data.Length; i++)
-                {
-                    TowerDataSO tower = data[i];
-                    if (towerNameTexts != null && i < towerNameTexts.Length && towerNameTexts[i] != null)
-                        towerNameTexts[i].text = tower != null ? tower.towerName : "TOWER";
-                    if (towerCostTexts != null && i < towerCostTexts.Length && towerCostTexts[i] != null)
-                        towerCostTexts[i].text = tower != null ? $" {tower.baseCost}" : "0";
+                towerNameTexts[i].text = tower != null ? tower.towerName : "TOWER";
+                towerNameTexts[i].fontSize = towerNameFontSize;
+            }
+            
+            // Update tower cost
+            if (towerCostTexts != null && i < towerCostTexts.Length && towerCostTexts[i] != null)
+            {
+                towerCostTexts[i].text = tower != null ? $" {tower.baseCost}" : "0";
+                towerCostTexts[i].fontSize = towerCostFontSize;
+            }
 
-                    int upgradeCost = GetNextUpgradeCost(tower);
-                    bool canUpgrade = placedTowers[i] != null && placedTowers[i].CanUpgrade(out upgradeCost);
-                    if (towerUpgradeButtons != null && i < towerUpgradeButtons.Length && towerUpgradeButtons[i] != null)
-                    {
-                        towerUpgradeButtons[i].interactable = canUpgrade;
-                        TMP_Text label = towerUpgradeButtons[i].GetComponentInChildren<TMP_Text>();
-                        if (label != null) label.text = canUpgrade ? $"UPGRADE {upgradeCost}" : "UPGRADE";
-                    }
-                }
-
-                if (leaksLevelText != null && LeakManager.Instance != null)
+            int upgradeCost = GetNextUpgradeCost(tower);
+            bool canUpgrade = placedTowers[i] != null && placedTowers[i].CanUpgrade(out upgradeCost);
+            if (towerUpgradeButtons != null && i < towerUpgradeButtons.Length && towerUpgradeButtons[i] != null)
+            {
+                towerUpgradeButtons[i].interactable = canUpgrade;
+                TMP_Text label = towerUpgradeButtons[i].GetComponentInChildren<TMP_Text>();
+                if (label != null)
                 {
-                    int leakCurrent = LeakManager.Instance.CurrentLeakCount;
-                    int leakMax = LeakManager.Instance.MaxLeakCapacity;
-                    leaksLevelText.text = $"LEAKS LEVEL\n{leakCurrent}/{leakMax}";
+                    label.text = canUpgrade ? $"UPGRADE {upgradeCost}" : "UPGRADE";
+                    label.fontSize = upgradeCostFontSize;
                 }
             }
+        }
+
+        if (leaksLevelText != null && LeakManager.Instance != null)
+        {
+            int leakCurrent = LeakManager.Instance.CurrentLeakCount;
+            int leakMax = LeakManager.Instance.MaxLeakCapacity;
+            leaksLevelText.text = $"LEAKS LEVEL\n{leakCurrent}/{leakMax}";
+        }
+    }
 
             private int GetNextUpgradeCost(TowerDataSO tower)
             {
