@@ -25,7 +25,16 @@ namespace MicroDefense.UI
         [Range(0f, 1f)]
         [SerializeField] private float clickVolume = 1f;
         
+        [Header("Spam Prevention")]
+        [Tooltip("Minimum delay between hover sounds (seconds)")]
+        [SerializeField] private float hoverCooldown = 0.1f;
+        
+        [Tooltip("Minimum delay between click sounds (seconds)")]
+        [SerializeField] private float clickCooldown = 0.05f;
+        
         private Button button;
+        private float lastHoverTime = -999f;
+        private float lastClickTime = -999f;
         
         private void Awake()
         {
@@ -41,9 +50,14 @@ namespace MicroDefense.UI
             if (!playHoverSound || button == null || !button.interactable)
                 return;
             
+            // Cooldown check - prevent spam
+            if (Time.time - lastHoverTime < hoverCooldown)
+                return;
+            
             if (AudioManager.Instance != null)
             {
                 AudioManager.Instance.PlayButtonHover();
+                lastHoverTime = Time.time;
             }
         }
         
@@ -56,9 +70,14 @@ namespace MicroDefense.UI
             if (!playClickSound || button == null || !button.interactable)
                 return;
             
+            // Cooldown check - prevent spam
+            if (Time.time - lastClickTime < clickCooldown)
+                return;
+            
             if (AudioManager.Instance != null)
             {
                 AudioManager.Instance.PlayButtonClick();
+                lastClickTime = Time.time;
             }
         }
         
