@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyType: 5
   enemyName: 
   enemyPrefab: {fileID: 2133518467374252110, guid: b610ee13ca602eb48b2f8f8352e91dd7, type: 3}
-  baseHealth: 500
+  baseHealth: 750
   moveSpeed: 1
   flatArmor: 0
   damageToCell: 15

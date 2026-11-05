@@ -15,7 +15,7 @@ MonoBehaviour:
   towerType: 0
   towerName: B Cell
   description: 
-  baseCost: 50
+  baseCost: 100
   towerPrefab: {fileID: 2535548714839134108, guid: 4cf4d35f90aef95499d3920d3f58e409, type: 3}
   icon: {fileID: 7482667652216324306, guid: c4b91cc618477cb4780ed63b560c5869, type: 3}
   projectileSprite: {fileID: -6217473919847561577, guid: 46fd7a67639ff6047afa6d64724110a5, type: 3}
