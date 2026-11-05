@@ -4019,16 +4019,16 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 472028865559009106, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
       propertyPath: waves.Array.size
-      value: 1
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 472028865559009106, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
       propertyPath: 'waves.Array.data[1]'
       value: 
-      objectReference: {fileID: 11400000, guid: 711b6d85dc845f84a9c3b97b387a20f8, type: 2}
+      objectReference: {fileID: 11400000, guid: 46e9b37aaa1599d438e4ce37587cc429, type: 2}
     - target: {fileID: 472028865559009106, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
       propertyPath: 'waves.Array.data[2]'
       value: 
-      objectReference: {fileID: 11400000, guid: 711b6d85dc845f84a9c3b97b387a20f8, type: 2}
+      objectReference: {fileID: 11400000, guid: 8c008430d6bbc7e46a899d366f31ce4d, type: 2}
     - target: {fileID: 472028865559009106, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
       propertyPath: spawnPaths.Array.data[0].spawnPoint
       value: 

@@ -5,11 +5,29 @@ namespace MicroDefense.Core
 {
     /// <summary>
     /// Automatically plays appropriate BGM based on the current scene
+    /// Attach this to a GameObject in each scene that needs BGM
     /// </summary>
     public class BGMManager : MonoBehaviour
     {
         private void Start()
         {
+            // Small delay to ensure AudioManager is ready
+            Invoke(nameof(PlayBGMForCurrentScene), 0.1f);
+        }
+        
+        private void OnEnable()
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+        
+        private void OnDisable()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+        
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            // Play BGM when scene is loaded
             PlayBGMForCurrentScene();
         }
 
@@ -17,7 +35,7 @@ namespace MicroDefense.Core
         {
             if (AudioManager.Instance == null)
             {
-                Debug.LogError("[BGMManager] AudioManager.Instance is NULL! Make sure AudioManager exists in scene.");
+                Debug.LogError("[BGMManager] AudioManager.Instance is NULL! Make sure AudioManager exists in Main Menu and has DontDestroyOnLoad.");
                 return;
             }
 
@@ -27,47 +45,40 @@ namespace MicroDefense.Core
             AudioClip bgmToPlay = null;
 
             // Determine which BGM to play based on scene name
-            switch (currentSceneName.ToLower())
+            string sceneLower = currentSceneName.ToLower();
+            
+            if (sceneLower.Contains("menu") || sceneLower == "mainmenu")
             {
-                case "mainmenu":
-                case "main menu":
-                case "menu":
-                    bgmToPlay = AudioManager.Instance.mainMenuBGM;
-                    Debug.Log($"[BGMManager] Playing Main Menu BGM. Clip assigned: {bgmToPlay != null}");
-                    break;
-
-                case "1":
-                case "2":
-                case "3":
-                case "level1":
-                case "level2":
-                case "level3":
-                    bgmToPlay = AudioManager.Instance.level1To5BGM;
-                    Debug.Log($"[BGMManager] Playing Level 1-5 BGM for scene: {currentSceneName}");
-                    break;
-
-                case "4":
-                case "5":
-                case "level4":
-                case "level5":
-                    bgmToPlay = AudioManager.Instance.level6To10BGM;
-                    Debug.Log($"[BGMManager] Playing Level 6-10 BGM for scene: {currentSceneName}");
-                    break;
-
-                default:
-                    Debug.LogWarning($"[BGMManager] No BGM mapping for scene: '{currentSceneName}'");
-                    break;
+                bgmToPlay = AudioManager.Instance.mainMenuBGM;
+                Debug.Log($"[BGMManager] Detected Main Menu scene. BGM clip assigned: {bgmToPlay != null}");
+            }
+            else if (sceneLower == "1" || sceneLower == "2" || sceneLower == "3" || 
+                     sceneLower == "level1" || sceneLower == "level2" || sceneLower == "level3")
+            {
+                bgmToPlay = AudioManager.Instance.level1To5BGM;
+                Debug.Log($"[BGMManager] Detected Level 1-3 scene. BGM clip assigned: {bgmToPlay != null}");
+            }
+            else if (sceneLower == "4" || sceneLower == "5" || 
+                     sceneLower == "level4" || sceneLower == "level5")
+            {
+                bgmToPlay = AudioManager.Instance.level6To10BGM;
+                Debug.Log($"[BGMManager] Detected Level 4-5 scene. BGM clip assigned: {bgmToPlay != null}");
+            }
+            else
+            {
+                Debug.LogWarning($"[BGMManager] No BGM mapping for scene: '{currentSceneName}'. Scene not recognized.");
+                return;
             }
 
             // Play the BGM
             if (bgmToPlay != null)
             {
-                Debug.Log($"[BGMManager] Playing BGM clip: {bgmToPlay.name}");
+                Debug.Log($"[BGMManager] ✓ Playing BGM clip: {bgmToPlay.name}");
                 AudioManager.Instance.PlayBGM(bgmToPlay);
             }
             else
             {
-                Debug.LogError($"[BGMManager] BGM clip is NULL for scene '{currentSceneName}'! Assign audio clip to AudioManager.");
+                Debug.LogError($"[BGMManager] ✗ BGM clip is NULL for scene '{currentSceneName}'! Go to Main Menu scene → Select AudioManager GameObject → Assign audio clips in Inspector.");
             }
         }
     }

@@ -17,9 +17,11 @@ public class CreditsController : MonoBehaviour
     public struct CreditEntry
     {
         public string title;
+        [TextArea(1, 5)] // Allow multiple lines in Inspector
         public string names;
     }
 
+    [Header("Credit Entries")]
     [SerializeField] private List<CreditEntry> credits = new List<CreditEntry>
     {
         new CreditEntry { title = "DEVELOPMENT", names = "Game Developer" },
@@ -29,6 +31,23 @@ public class CreditsController : MonoBehaviour
         new CreditEntry { title = "MUSIC & SOUND", names = "Audio Designer" },
         new CreditEntry { title = "SPECIAL THANKS", names = "Everyone who supported this project" },
     };
+
+    [Header("Text Styling")]
+    [SerializeField] private Color titleColor = Color.black;
+    [SerializeField] private Color namesColor = Color.black;
+    [SerializeField] private int titleFontSize = 28;
+    [SerializeField] private int namesFontSize = 20;
+    [SerializeField] private bool titleBold = true;
+    [SerializeField] private bool namesBold = true;
+    
+    [Header("Main Title")]
+    [SerializeField] private string mainTitle = "CREDITS";
+    [SerializeField] private Color mainTitleColor = Color.yellow;
+    [SerializeField] private int mainTitleFontSize = 40;
+    
+    [Header("End Text")]
+    [SerializeField] private string endText = "Thank you for playing!";
+    [SerializeField] private Color endTextColor = Color.cyan;
 
     private void Start()
     {
@@ -89,7 +108,7 @@ public class CreditsController : MonoBehaviour
         contentLayout.preferredHeight = 0; // Will auto-expand
 
         // Add title
-        CreateText("CREDITS", 40, FontStyle.Bold, Color.yellow, 60);
+        CreateText(mainTitle, mainTitleFontSize, FontStyle.Bold, mainTitleColor, 60);
 
         // Add spacing
         CreateSpacing(20);
@@ -97,24 +116,27 @@ public class CreditsController : MonoBehaviour
         // Add credit entries
         foreach (var entry in credits)
         {
-            CreateText(entry.title, 28, FontStyle.Bold, Color.white, 50);
-            CreateText(entry.names, 20, FontStyle.Normal, Color.gray, 40);
+            FontStyle titleStyle = titleBold ? FontStyle.Bold : FontStyle.Normal;
+            FontStyle namesStyle = namesBold ? FontStyle.Bold : FontStyle.Normal;
+            
+            CreateText(entry.title, titleFontSize, titleStyle, titleColor, 50);
+            CreateText(entry.names, namesFontSize, namesStyle, namesColor, 40);
             CreateSpacing(30);
         }
 
         // Add end text
         CreateSpacing(40);
-        CreateText("Thank you for playing!", 24, FontStyle.Bold, Color.cyan, 50);
+        CreateText(endText, 24, FontStyle.Bold, endTextColor, 50);
         CreateSpacing(60);
     }
 
-    private void CreateText(string text, int fontSize, FontStyle fontStyle, Color color, float height)
+    private void CreateText(string text, int fontSize, FontStyle fontStyle, Color color, float minHeight)
     {
         GameObject textObj = new GameObject("Text");
         textObj.transform.SetParent(creditsContent, false);
 
         RectTransform rectTransform = textObj.AddComponent<RectTransform>();
-        rectTransform.sizeDelta = new Vector2(600, height);
+        rectTransform.sizeDelta = new Vector2(600, minHeight);
 
         TextMeshProUGUI tmpText = textObj.AddComponent<TextMeshProUGUI>();
         tmpText.text = text;
@@ -133,10 +155,13 @@ public class CreditsController : MonoBehaviour
         tmpText.color = color;
         tmpText.alignment = TextAlignmentOptions.Center;
         tmpText.richText = true;
+        tmpText.enableWordWrapping = true; // Enable word wrap
+        tmpText.overflowMode = TextOverflowModes.Overflow; // Allow overflow untuk multi-line
 
         LayoutElement layout = textObj.AddComponent<LayoutElement>();
-        layout.preferredHeight = height;
+        layout.minHeight = minHeight;
         layout.preferredWidth = 600;
+        layout.flexibleHeight = 1; // Allow flexible height untuk multi-line
     }
 
     private void CreateSpacing(float height)

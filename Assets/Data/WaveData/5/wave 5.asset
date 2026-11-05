@@ -10,13 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e2b74c4ab111034c8a26d40a2a1a963, type: 3}
-  m_Name: NewWaveData 2
+  m_Name: wave 5
   m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Data.WaveDataSO
   waveNumber: 1
   waveName: 1
-  spawnGroups:
-  - enemyData: {fileID: 11400000, guid: 7c4bbf846709e1d46bb26b2392621bc0, type: 2}
-    count: 10
-    spawnInterval: 4
-    initialDelay: 4
+  pathSpawnGroups:
+  - pathIndex: 0
+    enemyData: {fileID: 11400000, guid: 6122d1e836f96b54cad01bc20b969ec9, type: 2}
+    count: 1
+    spawnInterval: 2
+    initialDelay: 2
   completionBonusPlasma: 50

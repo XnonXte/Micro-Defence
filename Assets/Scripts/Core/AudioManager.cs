@@ -52,17 +52,19 @@ namespace MicroDefense.Core
 
         private void Awake()
         {
+            // Singleton pattern: hanya boleh ada satu instance AudioManager
             if (Instance != null && Instance != this)
             {
-                Debug.Log("[AudioManager] Instance already exists. Destroying duplicate.");
+                Debug.Log("[AudioManager] Instance already exists. Destroying duplicate from scene: " + UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
                 Destroy(gameObject);
                 return;
             }
 
             Instance = this;
+            // DontDestroyOnLoad membuat AudioManager tetap hidup di semua scene
             DontDestroyOnLoad(gameObject);
             
-            Debug.Log("[AudioManager] Initialized as singleton with DontDestroyOnLoad");
+            Debug.Log("[AudioManager] Initialized as singleton with DontDestroyOnLoad. Will persist across all scenes.");
 
             // Ensure we have audio sources
             if (bgmAudioSource == null)

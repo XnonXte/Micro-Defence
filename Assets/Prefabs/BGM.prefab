@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9074815126498777705}
   - component: {fileID: 1498217813411072008}
+  - component: {fileID: 6351140050754633391}
   m_Layer: 0
   m_Name: BGM
   m_TagString: Untagged
@@ -44,3 +45,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c933f2f8e3de304cb37dd3a48108b32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Core.BGMManager
+--- !u!114 &6351140050754633391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2251601567354300930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bab71eb7776c9614188175fe605e3b76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Core.AudioManager
+  bgmAudioSource: {fileID: 0}
+  sfxAudioSource: {fileID: 0}
+  audioMixer: {fileID: 0}
+  mainMenuBGM: {fileID: 8300000, guid: 1c9ac7610ffcec14db04449308be474a, type: 3}
+  level1To5BGM: {fileID: 8300000, guid: ce9a641c090832943880d36eaf24d957, type: 3}
+  level6To10BGM: {fileID: 8300000, guid: c0e6cdfa999c38d4982aef36c875678c, type: 3}
+  turretPlaced: {fileID: 8300000, guid: db0ff25a00ddb06468d07855c7f460c5, type: 3}
+  turretUpgraded: {fileID: 8300000, guid: 6bd80ab2a1a2e644199d4cfb4ecc2cbe, type: 3}
+  tCellShooting: {fileID: 8300000, guid: e7b21ae449d51ab458c9b64a070d9baf, type: 3}
+  bCellShooting: {fileID: 8300000, guid: c0fe8b7aa11cdaf479430710dde53766, type: 3}
+  plasmaPickup: {fileID: 8300000, guid: 8d04a340617f2724b8f2240751564513, type: 3}
+  pipetPicked: {fileID: 8300000, guid: 30efb7131729ad341afdab2ce9a58760, type: 3}
+  pipetUnpicked: {fileID: 8300000, guid: d1eeab0e25d442c4f90357d40b9a6104, type: 3}
+  notEnoughBalance: {fileID: 8300000, guid: 2d8436b406ed95943aa41ffc1976969a, type: 3}
+  macrophageHurt: {fileID: 8300000, guid: 327c2059e7fbcac4ab3f5d8e3a499bbd, type: 3}
+  incomingWave: {fileID: 8300000, guid: c5800acc65dc6cf449491990c35386ed, type: 3}
+  gameOver: {fileID: 8300000, guid: 496df557a8a23d646aea7c1fe0e4fdc4, type: 3}
+  enemyLolos: {fileID: 8300000, guid: 7345280b4f5b3dc4b852d79b9b72243b, type: 3}
+  enemyHit: {fileID: 8300000, guid: 406406d7ad7d55746b5d003179a6f8f5, type: 3}
+  cardHover: {fileID: 8300000, guid: a18a2c34ecc9b164caa5c30a661f9664, type: 3}
+  cardClick: {fileID: 8300000, guid: cb221093d93fa664897a9f5cf8071ee2, type: 3}
+  buttonHover: {fileID: 8300000, guid: 0acf7cba362b0fa45977793984fcb453, type: 3}
+  buttonClick: {fileID: 8300000, guid: 21e1ec14905f42e418f15556f0407300, type: 3}
+  bossGrunt: {fileID: 8300000, guid: a21662e0e4042a94bb1a4e720997400c, type: 3}
+  uiClickA: {fileID: 0}
+  uiClickB: {fileID: 0}
+  uiTapA: {fileID: 0}
+  uiTapB: {fileID: 0}
+  uiSwitchA: {fileID: 0}
+  uiSwitchB: {fileID: 0}

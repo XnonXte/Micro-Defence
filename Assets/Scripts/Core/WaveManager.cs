@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MicroDefense.Data;
 using MicroDefense.Enemies;
+using MicroDefense.Core;
 using UnityEngine;
 
 namespace MicroDefense.Core
@@ -53,6 +54,15 @@ namespace MicroDefense.Core
 
         private void Start()
         {
+            // Jangan jalankan WaveManager di Main Menu
+            string currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+            if (currentSceneName.ToLower().Contains("menu"))
+            {
+                Debug.Log("[WaveManager] Detected Main Menu scene. WaveManager disabled.");
+                enabled = false;
+                return;
+            }
+            
             // Auto-populate waves from Resources if empty
             if (waves.Count == 0)
             {
@@ -324,6 +334,10 @@ namespace MicroDefense.Core
             {
                 Debug.Log($"[WaveManager] All waves completed!");
                 OnAllWavesCompleted?.Invoke();
+                
+                // Play victory SFX
+                AudioManager.Instance?.PlayGameOver();
+                
                 if (CompleteUIManager.Instance != null)
                     CompleteUIManager.Instance.ShowVictory();
                 if (GameManager.Instance != null)
