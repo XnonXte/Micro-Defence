@@ -269,6 +269,10 @@ PrefabInstance:
       propertyPath: 'spawnPaths.Array.data[0].waypoints.Array.data[12]'
       value: 
       objectReference: {fileID: 549882671}
+    - target: {fileID: 3530536506092897267, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
+      propertyPath: startingPlasma
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 4440826008167048838, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
       propertyPath: pausePanel
       value: 

@@ -786,8 +786,6 @@ MonoBehaviour:
   clickVolume: 1
   hoverCooldown: 0.1
   clickCooldown: 0.05
-  hoverCooldown: 0.25
-  clickCooldown: 0.08
 --- !u!114 &56074185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -806,8 +804,6 @@ MonoBehaviour:
   clickVolume: 1
   hoverCooldown: 0.1
   clickCooldown: 0.05
-  hoverCooldown: 0.25
-  clickCooldown: 0.08
 --- !u!114 &56074186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -826,8 +822,6 @@ MonoBehaviour:
   clickVolume: 1
   hoverCooldown: 0.1
   clickCooldown: 0.05
-  hoverCooldown: 0.25
-  clickCooldown: 0.08
 --- !u!114 &56074187
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -846,8 +840,6 @@ MonoBehaviour:
   clickVolume: 1
   hoverCooldown: 0.1
   clickCooldown: 0.05
-  hoverCooldown: 0.25
-  clickCooldown: 0.08
 --- !u!114 &56074188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -866,8 +858,6 @@ MonoBehaviour:
   clickVolume: 1
   hoverCooldown: 0.1
   clickCooldown: 0.05
-  hoverCooldown: 0.25
-  clickCooldown: 0.08
 --- !u!4 &113564013 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7106149713932556153, guid: 2be9df5ec9cec4e4f98b99822e392b9a, type: 3}
@@ -2773,8 +2763,6 @@ MonoBehaviour:
   clickVolume: 1
   hoverCooldown: 0.1
   clickCooldown: 0.05
-  hoverCooldown: 0.25
-  clickCooldown: 0.08
 --- !u!1001 &564311815
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2962,8 +2950,6 @@ MonoBehaviour:
   clickVolume: 1
   hoverCooldown: 0.1
   clickCooldown: 0.05
-  hoverCooldown: 0.25
-  clickCooldown: 0.08
 --- !u!4 &768938773 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8488685036496862249, guid: 384091fa30d557047959435fb9aeee47, type: 3}
@@ -3203,8 +3189,6 @@ MonoBehaviour:
   clickVolume: 1
   hoverCooldown: 0.1
   clickCooldown: 0.05
-  hoverCooldown: 0.25
-  clickCooldown: 0.08
 --- !u!114 &1350425076
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3223,8 +3207,6 @@ MonoBehaviour:
   clickVolume: 1
   hoverCooldown: 0.1
   clickCooldown: 0.05
-  hoverCooldown: 0.25
-  clickCooldown: 0.08
 --- !u!213 &1402991696
 Sprite:
   serializedVersion: 2
@@ -3683,8 +3665,6 @@ MonoBehaviour:
   clickVolume: 1
   hoverCooldown: 0.1
   clickCooldown: 0.05
-  hoverCooldown: 0.25
-  clickCooldown: 0.08
 --- !u!1 &1565312649
 GameObject:
   m_ObjectHideFlags: 0
@@ -3807,7 +3787,7 @@ Transform:
   m_GameObject: {fileID: 1597979545}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -7.9, y: -0.4, z: -10}
+  m_LocalPosition: {x: -10, y: -0.4, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3875,8 +3855,6 @@ MonoBehaviour:
   clickVolume: 1
   hoverCooldown: 0.1
   clickCooldown: 0.05
-  hoverCooldown: 0.25
-  clickCooldown: 0.08
 --- !u!114 &1690847175 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4440826008167048838, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
@@ -4193,8 +4171,6 @@ MonoBehaviour:
   clickVolume: 1
   hoverCooldown: 0.1
   clickCooldown: 0.05
-  hoverCooldown: 0.25
-  clickCooldown: 0.08
 --- !u!4 &2124925684 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7106149713932556153, guid: 2be9df5ec9cec4e4f98b99822e392b9a, type: 3}
@@ -4498,6 +4474,10 @@ PrefabInstance:
       propertyPath: dropScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3530536506092897267, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
+      propertyPath: startingPlasma
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 4440826008167048838, guid: 46135eb68c9a8b944ae38edd0d3a6d8f, type: 3}
       propertyPath: pausePanel
       value: 
@@ -4635,4 +4615,15 @@ PrefabInstance:
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
-  m_Roots: []
+  m_Roots:
+  - {fileID: 2927003819066650791}
+  - {fileID: 2008819285878742973}
+  - {fileID: 621186138}
+  - {fileID: 56074171}
+  - {fileID: 55534512}
+  - {fileID: 291005298}
+  - {fileID: 460186223}
+  - {fileID: 1183134740}
+  - {fileID: 1565312650}
+  - {fileID: 1597979548}
+  - {fileID: 1750249076}
