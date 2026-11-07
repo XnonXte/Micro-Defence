@@ -7,6 +7,11 @@ namespace MicroDefense.Enemies
     {
         private int remainingLives;
 
+        protected override void Awake()
+        {
+            base.Awake();
+        }
+
         public override void Initialize(EnemyDataSO data)
         {
             base.Initialize(data);
@@ -17,48 +22,27 @@ namespace MicroDefense.Enemies
 
         public override void TakeDamage(float rawDamage, bool isTrueDamage = false)
         {
-            // Don't process damage if already dead or no data
-            if (enemyData == null)
-            {
-                Debug.LogWarning($"[SwarmVirus.TakeDamage] enemyData is null on {gameObject.name}");
+            if (currentHealth <= 0f || enemyData == null)
                 return;
-            }
-            
-            // If already at 0 health with 0 lives, we're truly dead - ignore further damage
-            if (currentHealth <= 0f && remainingLives <= 0)
-            {
-                Debug.Log($"[SwarmVirus.TakeDamage] {gameObject.name} is already dead, ignoring damage");
-                return;
-            }
 
             float effectiveArmor = currentArmor * (1f - GetArmorShredFactor());
             float finalDamage = isTrueDamage ? rawDamage : Mathf.Max(1f, rawDamage - effectiveArmor);
             currentHealth -= finalDamage;
-            
-            Debug.Log($"[SwarmVirus.TakeDamage] {gameObject.name} took {finalDamage} damage. Health: {currentHealth}/{enemyData.swarmHealthPerLife}, Lives: {remainingLives}");
-            
             PublishHealthChanged(enemyData.swarmHealthPerLife);
 
-            // Still has health in current life
             if (currentHealth > 0f)
                 return;
 
-            // Lost a life
             remainingLives--;
-            Debug.Log($"[SwarmVirus] {gameObject.name} lost a life! Remaining lives: {remainingLives}");
-            
             if (remainingLives <= 0)
             {
-                Debug.Log($"[SwarmVirus] {gameObject.name} has no more lives, calling Die()");
                 Die();
                 return;
             }
 
-            // Still has lives left - regenerate
             currentHealth = Mathf.Max(1f, enemyData.swarmHealthPerLife);
             ApplyLifeSprite();
             PublishHealthChanged(enemyData.swarmHealthPerLife);
-            Debug.Log($"[SwarmVirus] {gameObject.name} regenerated with {currentHealth} HP");
         }
 
         private void ApplyLifeSprite()
@@ -74,12 +58,6 @@ namespace MicroDefense.Enemies
 
             if (nextSprite != null)
                 spriteRenderer.sprite = nextSprite;
-        }
-
-        protected override void Die()
-        {
-            Debug.Log($"[SwarmVirus.Die] {gameObject.name} is dying. Invoking OnEnemyDied event.");
-            base.Die();
         }
 
         private float GetArmorShredFactor()

@@ -71,12 +71,6 @@ namespace MicroDefense.Enemies
             if (dropCollider != null)
                 dropCollider.enabled = false;
 
-        
-            if (AudioManager.Instance != null)
-            {
-                AudioManager.Instance.PlayPlasmaPickup();
-            }
-
             if (PlasmaManager.Instance != null)
                 PlasmaManager.Instance.AddPlasma(value);
 

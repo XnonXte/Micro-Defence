@@ -68,7 +68,7 @@ namespace MicroDefense.Core
 
             SpriteRenderer renderer = drop.AddComponent<SpriteRenderer>();
             renderer.sprite = Resources.Load<Sprite>("plasma");
-            renderer.sortingOrder = 150; // Set tinggi agar selalu di atas semua virus (virus biasanya 10-50)
+            renderer.sortingOrder = 5; // Render di bawah enemy (enemy biasanya 10+)
 
             if (renderer.sprite == null)
             {
