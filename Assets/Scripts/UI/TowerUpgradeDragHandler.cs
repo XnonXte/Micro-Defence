@@ -90,7 +90,7 @@ namespace MicroDefense.UI
             Vector3 screenPos = eventData.position;
             
             // Naikin Y offset dari cursor user
-            screenPos.y += 300f;
+            screenPos.y += 250f;
             
             // Konversi screen position ke UI canvas position
             if (rectTransform.parent != null && rectTransform.parent.GetComponent<Canvas>() != null)

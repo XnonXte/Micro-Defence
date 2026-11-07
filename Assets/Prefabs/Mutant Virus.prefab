@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4596760881717650015}
   - component: {fileID: 4596760881717650016}
   - component: {fileID: 9000000000000000010}
+  - component: {fileID: 922945735521039364}
   m_Layer: 0
   m_Name: Mutant Virus
   m_TagString: Untagged
@@ -152,6 +153,7 @@ MonoBehaviour:
   hitFlashDuration: 0.15
   hitFlashColor: {r: 0.5924529, g: 0.5924529, b: 0.5924529, a: 1}
   searchInChildren: 1
+  enableAttackEffect: 1
 --- !u!195 &4596760881717650015
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -188,10 +190,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimumSpacing: 0.7
   spacingCheckRadius: 1
+  ignoreSpacingWhenBlocked: 1
   enemyLayer:
     serializedVersion: 2
     m_Bits: 0
   stopDistanceFromBlocker: 0
+  blockedStopDistance: 0
+  tightenStopWhenBlocked: 1
 --- !u!95 &9000000000000000010
 Animator:
   serializedVersion: 7
@@ -214,3 +219,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &922945735521039364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8847551451954189412}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26342d63a031a4e428e9dd506cacbb5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Enemies.EnemyHitEffect
+  enableShake: 1
+  shakeDuration: 0.15
+  shakeIntensity: 0.08
+  shakeSpeed: 40
+  enableRotationShake: 1
+  rotationShakeAmount: 8
+  enableScalePulse: 1
+  scalePulseAmount: 0.08
+  scalePulseDuration: 0.12
+  enableColorFlash: 1
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashDuration: 0.1

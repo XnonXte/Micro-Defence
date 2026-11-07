@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 1909550130635965889}
   - component: {fileID: 9000000000000000012}
   - component: {fileID: 9000000000000000013}
+  - component: {fileID: -8129820339342873993}
   m_Layer: 0
   m_Name: Swarm Virus
   m_TagString: Untagged
@@ -239,3 +240,27 @@ MonoBehaviour:
   hitFlashColor: {r: 1, g: 1, b: 1, a: 1}
   searchInChildren: 1
   enableAttackEffect: 1
+--- !u!114 &-8129820339342873993
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133518467374252110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26342d63a031a4e428e9dd506cacbb5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Enemies.EnemyHitEffect
+  enableShake: 1
+  shakeDuration: 0.15
+  shakeIntensity: 0.08
+  shakeSpeed: 40
+  enableRotationShake: 1
+  rotationShakeAmount: 8
+  enableScalePulse: 1
+  scalePulseAmount: 0.08
+  scalePulseDuration: 0.12
+  enableColorFlash: 1
+  flashColor: {r: 1, g: 1, b: 1, a: 1}
+  flashDuration: 0.1

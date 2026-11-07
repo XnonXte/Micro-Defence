@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 9000000000000000012}
   - component: {fileID: 9000000000000000013}
   - component: {fileID: -9194945402995635516}
+  - component: {fileID: 4747226978758133042}
   m_Layer: 0
   m_Name: Omega Virus
   m_TagString: Untagged
@@ -154,6 +155,7 @@ MonoBehaviour:
   hitFlashDuration: 0.15
   hitFlashColor: {r: 0.6301887, g: 0.6301887, b: 0.6301887, a: 1}
   searchInChildren: 1
+  enableAttackEffect: 1
 --- !u!195 &1909550130635965888
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -190,10 +192,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimumSpacing: 0.7
   spacingCheckRadius: 1
+  ignoreSpacingWhenBlocked: 1
   enemyLayer:
     serializedVersion: 2
     m_Bits: 0
   stopDistanceFromBlocker: 0.5
+  blockedStopDistance: 0.05
+  tightenStopWhenBlocked: 1
 --- !u!95 &9000000000000000012
 Animator:
   serializedVersion: 7
@@ -253,6 +258,7 @@ MonoBehaviour:
   hitFlashDuration: 0.15
   hitFlashColor: {r: 1, g: 1, b: 1, a: 1}
   searchInChildren: 1
+  enableAttackEffect: 1
   enableSpawning: 1
   minionsPerSpawn: 3
   spawnInterval: 15
@@ -268,3 +274,27 @@ MonoBehaviour:
   spawnEffectPrefab: {fileID: 0}
   spawnEffectDuration: 0.5
   showDebugLogs: 1
+--- !u!114 &4747226978758133042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133518467374252110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26342d63a031a4e428e9dd506cacbb5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Enemies.EnemyHitEffect
+  enableShake: 1
+  shakeDuration: 0.15
+  shakeIntensity: 0.08
+  shakeSpeed: 40
+  enableRotationShake: 1
+  rotationShakeAmount: 8
+  enableScalePulse: 1
+  scalePulseAmount: 0.08
+  scalePulseDuration: 0.12
+  enableColorFlash: 1
+  flashColor: {r: 0.7660377, g: 0.7660377, b: 0.7660377, a: 1}
+  flashDuration: 0.1

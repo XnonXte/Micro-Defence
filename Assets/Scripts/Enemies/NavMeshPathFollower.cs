@@ -235,24 +235,56 @@ namespace MicroDefense.Enemies
         {
             currentBlocker = blocked ? blockerTransform : null;
 
-            if (blocked && blockerTransform != null && agent != null)
-            {
-                // Arahkan agent ke posisi blocker agar enemy jalan maju ke tower
-                if (agent.isOnNavMesh) agent.isStopped = false;
-                agent.stoppingDistance = 0f;
-                agent.SetDestination(blockerTransform.position);
-            }
-            else if (!blocked && agent != null)
-            {
-                // Resume pathfinding ke original target saat unblock
-                agent.stoppingDistance = 0f;
-                ResumePathfinding();
-            }
+            // Tidak perlu atur NavMeshAgent di sini, karena Update() akan handle blocked state
+            // Agent akan di-disable otomatis saat enemy.IsBlocked == true
         }
 
         private void Update()
         {
             if (enemy == null || agent == null) return;
+
+            // --- Prioritas 1: Sedang di-block oleh tower ---
+            if (enemy.IsBlocked)
+            {
+                if (currentBlocker != null)
+                {
+                    // Disable NavMeshAgent saat blocked
+                    if (agent.enabled)
+                    {
+                        agent.enabled = false;
+                    }
+                    
+                    // Smooth movement ke tower - tidak pakai snap
+                    Vector3 dirToTower = (currentBlocker.position - transform.position);
+                    dirToTower.z = 0f;
+                    float dist = dirToTower.magnitude;
+                    
+                    if (dist > 0.05f)
+                    {
+                        Vector3 dir = dirToTower.normalized;
+                        float step = Mathf.Min(enemy.currentSpeed * 3f * Time.deltaTime, dist);
+                        transform.position += dir * step;
+                    }
+                    // Kalau sudah dekat, biarkan di posisi (tidak snap, biar smooth)
+                }
+                return;
+            }
+
+            // --- Tidak di-block: pastikan agent aktif dan resume pathfinding ---
+            if (!agent.enabled)
+            {
+                agent.enabled = true;
+                // Resume path ke tujuan setelah unblock
+                if (targetDestination != null && agent.isOnNavMesh)
+                {
+                    NavMeshHit hit;
+                    Vector3 target = GetCurrentTarget() != null ? GetCurrentTarget().position : targetDestination.position;
+                    if (NavMesh.SamplePosition(target, out hit, 5f, NavMesh.AllAreas))
+                    {
+                        agent.SetDestination(hit.position);
+                    }
+                }
+            }
 
             agent.speed = enemy.currentSpeed;
 
@@ -262,65 +294,41 @@ namespace MicroDefense.Enemies
                 return;
             }
 
-            // Cek apakah agent masih valid di NavMesh
             if (!agent.isOnNavMesh)
             {
-                useFallbackMovement = true;
-                return;
-            }
-
-            // --- Prioritas 1: Sedang di-block oleh tower ---
-            if (enemy.IsBlocked)
-            {
-                if (currentBlocker != null)
+                // Coba warp ke NavMesh terdekat
+                NavMeshHit spawnHit;
+                if (NavMesh.SamplePosition(transform.position, out spawnHit, 5f, NavMesh.AllAreas))
                 {
-                    // SIMPLEST SOLUTION: LANGSUNG SNAP KE POSISI TOWER, TANPA JARAK!
-                    // Disable NavMeshAgent sepenuhnya
-                    if (agent.enabled)
+                    agent.Warp(spawnHit.position);
+                    // Setelah warp, set destination lagi
+                    if (targetDestination != null)
                     {
-                        agent.enabled = false;
+                        Vector3 target = GetCurrentTarget() != null ? GetCurrentTarget().position : targetDestination.position;
+                        NavMeshHit hit;
+                        if (NavMesh.SamplePosition(target, out hit, 5f, NavMesh.AllAreas))
+                        {
+                            agent.SetDestination(hit.position);
+                        }
                     }
-                    
-                    // LANGSUNG SET POSISI = POSISI TOWER (NO DISTANCE CHECK)
-                    Vector3 towerPosition = currentBlocker.position;
-                    towerPosition.z = transform.position.z; // Keep Z
-                    transform.position = towerPosition; // SNAP LANGSUNG, TIDAK ADA JARAK!
                 }
                 else
                 {
-                    // Tidak ada blocker → freeze
-                    if (agent.enabled)
-                    {
-                        agent.isStopped = true;
-                        agent.velocity = Vector3.zero;
-                    }
-                }
-                return;
-            }
-            
-            // Re-enable NavMeshAgent kalau tidak blocked lagi
-            if (!agent.enabled && agent.isOnNavMesh)
-            {
-                agent.enabled = true;
-            }
-
-            // --- Prioritas 2: Spacing — ada enemy di depan, tunggu ---
-            // SKIP spacing check saat enemy sedang blocked oleh tower!
-            if (!enemy.IsBlocked && IsBlockedByEnemyAhead())
-            {
-                if (agent.enabled && agent.isOnNavMesh)
-                {
-                    agent.isStopped = true;
-                    agent.velocity = Vector3.zero;
+                    useFallbackMovement = true;
                 }
                 return;
             }
 
-            // --- Jalan normal menuju tujuan akhir ---
-            if (agent.isOnNavMesh)
+            // --- Prioritas 2: Spacing ---
+            if (IsBlockedByEnemyAhead())
             {
-                agent.isStopped = false;
+                agent.isStopped = true;
+                agent.velocity = Vector3.zero;
+                return;
             }
+
+            // --- Jalan normal ---
+            agent.isStopped = false;
 
             if (targetDestination != null && (!hasNavTarget || (navTargetPosition - targetDestination.position).sqrMagnitude > 0.04f))
             {

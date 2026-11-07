@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 7865955254501693770}
   - component: {fileID: 7865955254501693771}
   - component: {fileID: 9000000000000000011}
+  - component: {fileID: 4597005236566807346}
   m_Layer: 0
   m_Name: Armored Virus
   m_TagString: Untagged
@@ -149,9 +150,10 @@ MonoBehaviour:
   currentHealth: 0
   currentSpeed: 0
   currentArmor: 0
-  hitFlashDuration: 0.15
+  hitFlashDuration: 0.01
   hitFlashColor: {r: 0.7509433, g: 0.7509433, b: 0.7509433, a: 1}
   searchInChildren: 0
+  enableAttackEffect: 1
 --- !u!195 &7865955254501693770
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -188,10 +190,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minimumSpacing: 0.7
   spacingCheckRadius: 1
+  ignoreSpacingWhenBlocked: 1
   enemyLayer:
     serializedVersion: 2
     m_Bits: 0
   stopDistanceFromBlocker: 0
+  blockedStopDistance: 0
+  tightenStopWhenBlocked: 1
 --- !u!95 &9000000000000000011
 Animator:
   serializedVersion: 7
@@ -214,3 +219,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4597005236566807346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7444604671867903440}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26342d63a031a4e428e9dd506cacbb5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MicroDefense.Enemies.EnemyHitEffect
+  enableShake: 1
+  shakeDuration: 0.15
+  shakeIntensity: 0.08
+  shakeSpeed: 40
+  enableRotationShake: 1
+  rotationShakeAmount: 8
+  enableScalePulse: 1
+  scalePulseAmount: 0.08
+  scalePulseDuration: 0.12
+  enableColorFlash: 1
+  flashColor: {r: 0.7509433, g: 0.74102515, b: 0.74102515, a: 1}
+  flashDuration: 0.1
