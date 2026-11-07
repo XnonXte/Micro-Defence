@@ -48,7 +48,7 @@ namespace MicroDefense.UI
             
             tierText = tierObj.AddComponent<TextMeshPro>();
             tierText.alignment = TextAlignmentOptions.Center;
-            tierText.fontSize = 3f;
+            tierText.fontSize = 6f; // Diperbesar lagi dari 4.5f ke 6f
             tierText.fontStyle = FontStyles.Bold;
             tierText.color = Color.white;
             tierText.sortingOrder = 100;
@@ -61,7 +61,7 @@ namespace MicroDefense.UI
             
             costText = costObj.AddComponent<TextMeshPro>();
             costText.alignment = TextAlignmentOptions.Center;
-            costText.fontSize = 2.5f;
+            costText.fontSize = 5.5f; // Diperbesar lagi dari 4f ke 5.5f
             costText.fontStyle = FontStyles.Bold;
             costText.color = new Color(1f, 0.85f, 0f); // Warna gold untuk cost
             costText.sortingOrder = 100;

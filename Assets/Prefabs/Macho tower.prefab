@@ -124,6 +124,7 @@ MonoBehaviour:
   animator: {fileID: 6966571357995657866}
   rotateTowardTarget: 1
   aimRotationOffset: 90
+  minBlockRange: 1e-40
   currentHealth: 100
   maxHealth: 100
   enableHitEffect: 1
@@ -165,11 +166,11 @@ MonoBehaviour:
   shakeDuration: 0.2
   shakeIntensity: 0.1
   shakeSpeed: 30
-  enableRotationShake: 1
+  enableRotationShake: 0
   rotationShakeAmount: 500
-  enableScalePulse: 1
+  enableScalePulse: 0
   scalePulseAmount: 0.1
   scalePulseDuration: 0.15
-  enableColorFlash: 0
-  flashColor: {r: 1, g: 0.5, b: 0.5, a: 1}
+  enableColorFlash: 1
+  flashColor: {r: 0.6301887, g: 0.6301887, b: 0.6301887, a: 1}
   flashDuration: 0.1
