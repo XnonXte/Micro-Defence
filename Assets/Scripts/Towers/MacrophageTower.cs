@@ -15,7 +15,8 @@ namespace MicroDefense.Towers
         [SerializeField] private float aimRotationOffset = 90f;
         
         [Header("Block Range")]
-        [SerializeField] private float minBlockRange = 1.2f; // Mulai block lebih dekat ke Macro (deteksi awal)
+        [SerializeField] public float minBlockRange = 1.0f; // Range deteksi untuk block (besar agar detect dari jauh)
+
 
         [Header("Macrophage Status")]
         public float currentHealth;
@@ -66,7 +67,7 @@ namespace MicroDefense.Towers
         public override void ApplyTierStats(int tierLevel)
         {
             base.ApplyTierStats(tierLevel);
-            // Use minBlockRange instead of hardcoded 5f (kept small so virus approaches closer)
+            // Set range besar untuk detect virus dari jauh, virus akan jalan mendekat setelah di-block
             if (currentTierStats.range < minBlockRange)
                 currentTierStats.range = minBlockRange;
             maxHealth = currentTierStats.maxHealth;
@@ -107,6 +108,12 @@ namespace MicroDefense.Towers
                 {
                     if (enemy != null)
                     {
+                        // CRITICAL FIX: Unsubscribe from OnEnemyDied event before removing from list
+                        if (currentTierStats.specialAbility == SpecialAbilityType.ContinuousPhagocytosis)
+                        {
+                            enemy.OnEnemyDied -= HandleEnemyDiedWhileBlocked;
+                        }
+                        
                         enemy.SetBlocked(false);
                         var navFollower = enemy.GetComponent<NavMeshPathFollower>();
                         if (navFollower != null) navFollower.SetBlockedBy(false);

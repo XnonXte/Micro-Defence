@@ -185,11 +185,21 @@ namespace MicroDefense.Core
 
         private IEnumerator SpawnWave(WaveDataSO waveData)
         {
-            if (waveData == null) yield break;
+            if (waveData == null)
+            {
+                Debug.LogError("[WaveManager.SpawnWave] waveData is null!");
+                yield break;
+            }
 
             if (waveData.pathSpawnGroups != null && waveData.pathSpawnGroups.Count > 0)
             {
+                Debug.Log($"[WaveManager.SpawnWave] Using pathSpawnGroups with {waveData.pathSpawnGroups.Count} groups");
                 yield return StartCoroutine(SpawnWaveMultiPath(waveData));
+            }
+            else
+            {
+                Debug.LogError($"[WaveManager.SpawnWave] Wave {waveData.name} has no pathSpawnGroups! Wave will not spawn any enemies.");
+                Debug.LogError($"[WaveManager.SpawnWave] Please update the wave data in Unity Editor to use pathSpawnGroups with pathIndex.");
             }
         }
 
@@ -270,9 +280,14 @@ namespace MicroDefense.Core
                 return;
             }
 
-            enemy.Initialize(enemyData);
+            // CRITICAL: Subscribe to OnEnemyDied BEFORE Initialize
+            // This ensures we track the enemy even if Initialize is called in Awake
             enemy.OnEnemyDied += HandleEnemyRemoved;
             activeEnemyCount++;
+            Debug.Log($"[WaveManager.SpawnEnemyOnPath] Spawned {enemyData.enemyName}, activeEnemyCount: {activeEnemyCount}");
+
+            // Now initialize the enemy with data
+            enemy.Initialize(enemyData);
 
             // Setup pathing with NavMesh
             if (path.useNavMesh && path.targetPoint != null)
@@ -304,6 +319,14 @@ namespace MicroDefense.Core
         {
             activeEnemyCount = Mathf.Max(0, activeEnemyCount - 1);
             Debug.Log($"[WaveManager] Enemy removed. activeEnemyCount: {activeEnemyCount}, isWaveSpawning: {isWaveSpawning}, completionTriggered: {completionTriggered}");
+            
+            // Safety check: If activeEnemyCount somehow becomes negative, force it to 0
+            if (activeEnemyCount < 0)
+            {
+                Debug.LogWarning($"[WaveManager] activeEnemyCount was negative ({activeEnemyCount}), forcing to 0");
+                activeEnemyCount = 0;
+            }
+            
             TryCompleteWave();
         }
 

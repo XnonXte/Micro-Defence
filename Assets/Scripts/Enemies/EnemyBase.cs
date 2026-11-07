@@ -51,10 +51,12 @@ namespace MicroDefense.Enemies
 
         protected virtual void Awake()
         {
-            if (enemyData != null)
-            {
-                Initialize(enemyData);
-            }
+            // REMOVED: Do NOT call Initialize here
+            // Let WaveManager or spawner subscribe to OnEnemyDied first, then call Initialize
+            // if (enemyData != null)
+            // {
+            //     Initialize(enemyData);
+            // }
             
             // Cache sprite renderer for hit effects
             spriteRenderer = GetComponent<SpriteRenderer>();
@@ -188,12 +190,16 @@ namespace MicroDefense.Enemies
 
         protected virtual void Die()
         {
+            Debug.Log($"[EnemyBase.Die] {gameObject.name} dying. OnEnemyDied has {OnEnemyDied?.GetInvocationList().Length ?? 0} subscribers");
+            
             if (enemyData != null && PlasmaManager.Instance != null)
             {
                 PlasmaManager.Instance.SpawnDrop(transform.position, enemyData.plasmaReward);
             }
 
+            Debug.Log($"[EnemyBase.Die] {gameObject.name} invoking OnEnemyDied event");
             OnEnemyDied?.Invoke();
+            Debug.Log($"[EnemyBase.Die] {gameObject.name} destroying GameObject");
             Destroy(gameObject);
         }
 

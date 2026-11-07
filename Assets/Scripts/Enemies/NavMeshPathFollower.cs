@@ -24,10 +24,10 @@ namespace MicroDefense.Enemies
         [SerializeField] private LayerMask enemyLayer;
 
         [Tooltip("Jarak dari blocker tower agar enemy berhenti (biasanya = radius collider blocker).")]
-        [SerializeField] private float stopDistanceFromBlocker = 0.5f;
+        [SerializeField] private float stopDistanceFromBlocker = 0f;
         
         [Tooltip("Jarak minimum saat blocked agar virus bisa sangat dekat ke Macro (override stop distance).")]
-        [SerializeField] private float blockedStopDistance = 0.05f;
+        [SerializeField] private float blockedStopDistance = 0f;
         
         [Tooltip("Saat blocked, paksa enemy mendekat ke Macro meski ada spacing check (handled by priority).")]
         [SerializeField] private bool tightenStopWhenBlocked = true;
@@ -274,43 +274,22 @@ namespace MicroDefense.Enemies
             {
                 if (currentBlocker != null)
                 {
-                    Vector3 toBlocker = currentBlocker.position - transform.position;
-                    toBlocker.z = 0f;
-                    float distToBlocker = toBlocker.magnitude;
-                    float stopDist = tightenStopWhenBlocked ? Mathf.Min(stopDistanceFromBlocker, blockedStopDistance) : stopDistanceFromBlocker;
-
-                    if (distToBlocker <= stopDist)
+                    // SIMPLEST SOLUTION: LANGSUNG SNAP KE POSISI TOWER, TANPA JARAK!
+                    // Disable NavMeshAgent sepenuhnya
+                    if (agent.enabled)
                     {
-                        // Sudah cukup dekat → freeze total
-                        if (agent.isOnNavMesh)
-                        {
-                            agent.isStopped = true;
-                            agent.velocity = Vector3.zero;
-                        }
+                        agent.enabled = false;
                     }
-                    else
-                    {
-                        // Masih jauh → jalan ke arah tower (agar tidak berhenti jauh)
-                        if (agent.isOnNavMesh)
-                        {
-                            agent.isStopped = false;
-                            agent.stoppingDistance = 0f;
-                            agent.SetDestination(currentBlocker.position);
-                        }
-                        
-                        // Fallback nudge: jika NavMesh path/avoidance bikin macet jauh dari Macro,
-                        // dorong sedikit mendekat (tanpa mengabaikan NavMesh secara total).
-                        if (!agent.pathPending && agent.velocity.sqrMagnitude < 0.0001f && distToBlocker > stopDist + 0.05f)
-                        {
-                            Vector3 dir = toBlocker.normalized;
-                            transform.position += dir * Mathf.Min(enemy.currentSpeed, 2f) * Time.deltaTime;
-                        }
-                    }
+                    
+                    // LANGSUNG SET POSISI = POSISI TOWER (NO DISTANCE CHECK)
+                    Vector3 towerPosition = currentBlocker.position;
+                    towerPosition.z = transform.position.z; // Keep Z
+                    transform.position = towerPosition; // SNAP LANGSUNG, TIDAK ADA JARAK!
                 }
                 else
                 {
-                    // Tidak ada info blocker → freeze di tempat
-                    if (agent.isOnNavMesh)
+                    // Tidak ada blocker → freeze
+                    if (agent.enabled)
                     {
                         agent.isStopped = true;
                         agent.velocity = Vector3.zero;
@@ -318,11 +297,18 @@ namespace MicroDefense.Enemies
                 }
                 return;
             }
+            
+            // Re-enable NavMeshAgent kalau tidak blocked lagi
+            if (!agent.enabled && agent.isOnNavMesh)
+            {
+                agent.enabled = true;
+            }
 
             // --- Prioritas 2: Spacing — ada enemy di depan, tunggu ---
-            if (IsBlockedByEnemyAhead())
+            // SKIP spacing check saat enemy sedang blocked oleh tower!
+            if (!enemy.IsBlocked && IsBlockedByEnemyAhead())
             {
-                if (agent.isOnNavMesh)
+                if (agent.enabled && agent.isOnNavMesh)
                 {
                     agent.isStopped = true;
                     agent.velocity = Vector3.zero;
