@@ -216,6 +216,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!114 &125113204623733267
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,6 +234,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!1 &639707171015575507
 GameObject:
   m_ObjectHideFlags: 0
@@ -834,8 +838,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5429925530600080617}
   - {fileID: 4077212911599306628}
+  - {fileID: 5429925530600080617}
   m_Father: {fileID: 1984349927904188214}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1201,6 +1205,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!114 &5972275009609365519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1217,6 +1223,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!1 &2044665699222980137
 GameObject:
   m_ObjectHideFlags: 0
@@ -2449,6 +2457,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!114 &5805838438523683273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2465,6 +2475,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!1 &4123557448755373810
 GameObject:
   m_ObjectHideFlags: 0
@@ -3483,6 +3495,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!114 &3484600320692431491
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3499,6 +3513,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!1 &5119241574913996033
 GameObject:
   m_ObjectHideFlags: 0
@@ -3788,6 +3804,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!114 &4425377103982627002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3804,6 +3822,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!1 &5684462054661607152
 GameObject:
   m_ObjectHideFlags: 0
@@ -3955,6 +3975,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!114 &8789536977425619265
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3971,6 +3993,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!1 &5740628496874452927
 GameObject:
   m_ObjectHideFlags: 0
@@ -4370,6 +4394,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!114 &2023824760228976295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4386,6 +4412,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!1 &6234181031082368582
 GameObject:
   m_ObjectHideFlags: 0
@@ -4542,6 +4570,9 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   leaksLevelText: {fileID: 0}
+  towerNameFontSize: 18
+  towerCostFontSize: 16
+  upgradeCostFontSize: 14
   waveAnnouncementPanel: {fileID: 9000370952836589356}
   waveAnnouncementText: {fileID: 1097069960984392339}
   announcementDuration: 2.5
@@ -4877,6 +4908,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!114 &3746172669698338417
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4893,6 +4926,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!1 &7081102243518971791
 GameObject:
   m_ObjectHideFlags: 0
@@ -5398,6 +5433,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!114 &245466518286369797
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5414,6 +5451,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!1 &8522915028647015025
 GameObject:
   m_ObjectHideFlags: 0
@@ -6053,6 +6092,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!114 &1154748605460503492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6069,6 +6110,8 @@ MonoBehaviour:
   playClickSound: 1
   hoverVolume: 1
   clickVolume: 1
+  hoverCooldown: 0.25
+  clickCooldown: 0.08
 --- !u!1 &9148905466469222851
 GameObject:
   m_ObjectHideFlags: 0

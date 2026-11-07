@@ -899,7 +899,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 162636407}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 915997384}
+        m_TargetAssemblyTypeName: MainMenuController, Assembly-CSharp
+        m_MethodName: QuitGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &162636407
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3271,12 +3283,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelSelectController
   levelSelectPanel: {fileID: 1413019067}
   backButton: {fileID: 344204167}
+  levelButtons:
+  - levelNumber: 0
+    button: {fileID: 0}
+    lockOverlay: {fileID: 0}
+  - levelNumber: 0
+    button: {fileID: 0}
+    lockOverlay: {fileID: 0}
+  - levelNumber: 0
+    button: {fileID: 0}
+    lockOverlay: {fileID: 0}
+  - levelNumber: 0
+    button: {fileID: 0}
+    lockOverlay: {fileID: 0}
+  - levelNumber: 0
+    button: {fileID: 0}
+    lockOverlay: {fileID: 0}
   level1Button: {fileID: 1378880677}
   level2Button: {fileID: 680850076}
   level3Button: {fileID: 1353911239}
   level4Button: {fileID: 1735059401}
   level5Button: {fileID: 1976381357}
   mainMenuController: {fileID: 334509164}
+  lockedTint: {r: 0.45, g: 0.45, b: 0.45, a: 1}
+  unlockedTint: {r: 1, g: 1, b: 1, a: 1}
+  dimButtonTransitionColors: 1
 --- !u!1 &1234122995
 GameObject:
   m_ObjectHideFlags: 0
