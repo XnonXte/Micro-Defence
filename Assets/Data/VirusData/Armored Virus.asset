@@ -19,7 +19,7 @@ MonoBehaviour:
   moveSpeed: 2
   flatArmor: 0
   damageToCell: 15
-  plasmaReward: 50
+  plasmaReward: 30
   swarmLives: 3
   swarmHealthPerLife: 100
   swarmSpriteLife1: {fileID: 0}

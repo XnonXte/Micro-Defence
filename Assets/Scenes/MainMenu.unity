@@ -6112,7 +6112,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Alpha v1.0.3
+  m_text: 'Alpha v1.0.4
 
 '
   m_isRightToLeft: 0
