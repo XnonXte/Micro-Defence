@@ -55,6 +55,13 @@ namespace MicroDefense.Towers
             Vector3 direction = (target.transform.position - transform.position).normalized;
             transform.position += direction * speed * Time.deltaTime;
 
+            // Keep the sprite facing its direction of travel (assumes sprite points along +X).
+            if (direction.sqrMagnitude > 0.0001f)
+            {
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            }
+
             // Check hit distance - MAKE IT BIGGER
             float hitDistance = 0.5f;
             if (Vector3.Distance(transform.position, target.transform.position) < hitDistance)
@@ -78,7 +85,7 @@ namespace MicroDefense.Towers
             {
                 hasHit = true;
                 Debug.Log($"[Projectile] COLLISION HIT! Dealing {damage} damage to {target.name}. Current health: {target.currentHealth}");
-                target.TakeDamage(damage, false);
+                target.TakeDamage(damage, isTrueDamage);
                 Destroy(gameObject);
             }
         }

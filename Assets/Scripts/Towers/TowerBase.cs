@@ -159,18 +159,41 @@ namespace MicroDefense.Towers
             return result;
         }
 
-        protected void SpawnProjectile(EnemyBase target)
+        /// <summary>
+        /// Returns the world position projectiles should spawn from.
+        /// Uses the given spawn point if it is assigned (and not destroyed),
+        /// otherwise falls back to the tower's root position.
+        /// </summary>
+        protected Vector3 GetProjectileSpawnPosition(Transform spawnPoint)
         {
-            SpawnProjectile(target, false, currentTierStats.damage);
+            return spawnPoint != null ? spawnPoint.position : transform.position;
         }
 
-        protected void SpawnProjectile(EnemyBase target, bool isTrueDamage, float damage)
+        protected void SpawnProjectile(EnemyBase target, Transform spawnPoint = null)
+        {
+            SpawnProjectile(target, false, currentTierStats.damage, spawnPoint);
+        }
+
+        protected void SpawnProjectile(EnemyBase target, bool isTrueDamage, float damage, Transform spawnPoint = null)
         {
             if (target == null || towerData == null) return;
 
+            Vector3 spawnPosition = GetProjectileSpawnPosition(spawnPoint);
+
             GameObject projectileObj = new GameObject("Projectile");
-            projectileObj.transform.position = transform.position;
+            projectileObj.transform.position = spawnPosition;
             projectileObj.layer = gameObject.layer;
+
+            // Face the target from the spawn point (2D, rotation around Z).
+            // Assumes the projectile sprite points along +X; Projectile may
+            // still override this if it handles its own rotation.
+            Vector3 toTarget = target.transform.position - spawnPosition;
+            toTarget.z = 0f;
+            if (toTarget.sqrMagnitude > 0.0001f)
+            {
+                float angle = Mathf.Atan2(toTarget.y, toTarget.x) * Mathf.Rad2Deg;
+                projectileObj.transform.rotation = Quaternion.Euler(0f, 0f, angle);
+            }
 
             SpriteRenderer sr = projectileObj.AddComponent<SpriteRenderer>();
             sr.sortingOrder = 5;

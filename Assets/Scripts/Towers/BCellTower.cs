@@ -11,9 +11,24 @@ namespace MicroDefense.Towers
         [SerializeField] private bool rotateTowardTarget = true;
         [SerializeField] private float aimRotationOffset = 90f;
 
-        private static readonly int IsAttackingHash = Animator.StringToHash("IsAttacking");
-        private float attackAnimDuration = 0.5f;
-        private float attackAnimTimer = 0f;
+        [Header("Projectile")]
+        [Tooltip("Muzzle/nozzle Transform. Should be a child of the rotating turret. " +
+                 "If empty, projectiles spawn at the tower's root position.")]
+        [SerializeField] private Transform projectileSpawnPoint;
+
+        [Header("Animation")]
+        [SerializeField] private int animationLayer = 0;
+
+        private static readonly int IsAttackingHash =
+            Animator.StringToHash("IsAttacking");
+
+        private EnemyBase pendingTarget;
+
+        private bool shotPending;
+        private bool shootingStateCaptured;
+
+        private int previousStateHash;
+        private int shootingStateHash;
 
         protected override void Awake()
         {
@@ -21,7 +36,6 @@ namespace MicroDefense.Towers
             PlayIdleAnimation();
         }
 
-        /// <summary>Plays the Idle animation state (Blink for B-Cell).</summary>
         private void PlayIdleAnimation()
         {
             if (animator != null)
@@ -31,20 +45,49 @@ namespace MicroDefense.Towers
         protected override void Update()
         {
             base.Update();
-            
-            // Handle attack animation timer - auto-stop attack animation after duration
-            if (attackAnimTimer > 0f)
+
+            if (!shotPending || animator == null)
+                return;
+
+            AnimatorStateInfo currentState =
+                animator.GetCurrentAnimatorStateInfo(animationLayer);
+
+            // Detect the shooting animation dynamically.
+            if (!shootingStateCaptured)
             {
-                attackAnimTimer -= Time.deltaTime;
-                if (attackAnimTimer <= 0f && animator != null)
+                if (animator.IsInTransition(animationLayer))
                 {
-                    animator.SetBool(IsAttackingHash, false);
+                    AnimatorStateInfo nextState =
+                        animator.GetNextAnimatorStateInfo(animationLayer);
+
+                    if (nextState.fullPathHash != previousStateHash)
+                    {
+                        shootingStateHash = nextState.fullPathHash;
+                        shootingStateCaptured = true;
+                    }
                 }
+                else if (currentState.fullPathHash != previousStateHash)
+                {
+                    shootingStateHash = currentState.fullPathHash;
+                    shootingStateCaptured = true;
+                }
+
+                return;
+            }
+
+            // Wait until the shooting animation completes.
+            if (currentState.fullPathHash == shootingStateHash &&
+                currentState.normalizedTime >= 1f)
+            {
+                CompleteAttack();
             }
         }
 
         protected override bool TryPerformAttack()
         {
+            // An attack is already in progress; never queue a second one.
+            if (shotPending) return false;
+
             EnemyBase target = FindNearestEnemy(currentTierStats.range);
             if (target == null) return false;
 
@@ -52,33 +95,66 @@ namespace MicroDefense.Towers
             {
                 Vector3 direction = target.transform.position - transform.position;
                 direction.z = 0f;
+
                 if (direction.sqrMagnitude > 0.0001f)
                 {
                     float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                    transform.rotation = Quaternion.Euler(0f, 0f, angle + aimRotationOffset);
+
+                    transform.rotation = Quaternion.Euler(
+                        0f, 0f, angle + aimRotationOffset
+                    );
                 }
             }
 
-            // Trigger attack animation - B-Cell plays Shooting animation
+            pendingTarget = target;
+            shotPending = true;
+            shootingStateCaptured = false;
+
             if (animator != null)
             {
+                previousStateHash =
+                    animator.GetCurrentAnimatorStateInfo(animationLayer).fullPathHash;
+
                 animator.SetBool(IsAttackingHash, true);
-                attackAnimTimer = attackAnimDuration;
             }
-
-            // Play B-Cell shooting SFX
-            AudioManager.Instance?.PlayBCellShooting();
-
-            // Use base class SpawnProjectile (ADJUSTABLE damage)
-            SpawnProjectile(target);
-
-            // Apply slow ability if available
-            if (currentTierStats.specialAbility == SpecialAbilityType.AgglutinationSlow)
+            else
             {
-                target.ApplySlow(currentTierStats.specialEffectMagnitude, currentTierStats.specialEffectDuration);
+                CompleteAttack();
             }
 
             return true;
+        }
+
+        private void CompleteAttack()
+        {
+            if (animator != null)
+                animator.SetBool(IsAttackingHash, false);
+
+            EnemyBase target = pendingTarget;
+
+            // Reset pending attack state.
+            pendingTarget = null;
+            shotPending = false;
+            shootingStateCaptured = false;
+
+            if (target == null)
+                return;
+
+            // Play shooting SFX.
+            AudioManager.Instance?.PlayBCellShooting();
+
+            // Spawn projectile from the nozzle after the shooting animation finishes.
+            SpawnProjectile(target, projectileSpawnPoint);
+
+            // Apply slow ability.
+            if (currentTierStats.specialAbility ==
+                SpecialAbilityType.AgglutinationSlow)
+            {
+                target.ApplySlow(
+                    currentTierStats.specialEffectMagnitude,
+                    currentTierStats.specialEffectDuration
+                );
+            }
         }
     }
 }
