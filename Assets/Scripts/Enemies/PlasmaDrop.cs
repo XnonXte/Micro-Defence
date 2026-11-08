@@ -10,7 +10,7 @@ namespace MicroDefense.Enemies
         [SerializeField] private float dropDuration = 0.35f;
         [SerializeField] private float bounceHeight = 0.35f;
         [SerializeField] private float fadeDuration = 0.25f;
-        [SerializeField] private float lifetime = 10f;
+        [SerializeField] private float lifetime = 16f;
         [SerializeField] private float warningThreshold = 0.3f;
         [SerializeField] private float blinkMinInterval = 0.5f;
         [SerializeField] private float blinkMaxInterval = 0.5f;

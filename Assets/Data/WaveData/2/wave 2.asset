@@ -23,6 +23,6 @@ MonoBehaviour:
   - pathIndex: 0
     enemyData: {fileID: 11400000, guid: 3e46d20898be3684486e7b4a729903e1, type: 2}
     count: 6
-    spawnInterval: 3
+    spawnInterval: 2.5
     initialDelay: 3
   completionBonusPlasma: 0

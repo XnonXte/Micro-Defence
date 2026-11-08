@@ -38,7 +38,7 @@ MonoBehaviour:
     specialEffectDuration: 0
   - tierLevel: 2
     tierName: Level 2
-    upgradeCost: 300
+    upgradeCost: 200
     damage: 100
     attackSpeed: 1
     range: 30

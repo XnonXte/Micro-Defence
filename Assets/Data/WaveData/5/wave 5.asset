@@ -17,12 +17,12 @@ MonoBehaviour:
   pathSpawnGroups:
   - pathIndex: 0
     enemyData: {fileID: 11400000, guid: 6122d1e836f96b54cad01bc20b969ec9, type: 2}
-    count: 7
-    spawnInterval: 3
+    count: 2
+    spawnInterval: 5
     initialDelay: 2
   - pathIndex: 1
     enemyData: {fileID: 11400000, guid: 6122d1e836f96b54cad01bc20b969ec9, type: 2}
-    count: 7
-    spawnInterval: 3
+    count: 2
+    spawnInterval: 5
     initialDelay: 2
   completionBonusPlasma: 0
