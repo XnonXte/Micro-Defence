@@ -25,4 +25,4 @@ MonoBehaviour:
     count: 6
     spawnInterval: 3
     initialDelay: 3
-  completionBonusPlasma: 50
+  completionBonusPlasma: 0

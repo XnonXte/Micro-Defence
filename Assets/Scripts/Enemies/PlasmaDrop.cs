@@ -10,12 +10,32 @@ namespace MicroDefense.Enemies
         [SerializeField] private float dropDuration = 0.35f;
         [SerializeField] private float bounceHeight = 0.35f;
         [SerializeField] private float fadeDuration = 0.25f;
+        [SerializeField] private float lifetime = 10f;
+        [SerializeField] private float warningThreshold = 0.3f;
+        [SerializeField] private float blinkMinInterval = 0.5f;
+        [SerializeField] private float blinkMaxInterval = 0.5f;
 
         private SpriteRenderer spriteRenderer;
         private Collider2D dropCollider;
         private Vector3 startPosition;
         private Vector3 baseScale;
+        private Coroutine expirationCoroutine;
+        private Coroutine fadeOutCoroutine;
         private bool collected;
+        private bool destructionStarted;
+
+        public void Initialize(int plasmaValue, float dropLifetime)
+        {
+            value = Mathf.Max(1, plasmaValue);
+            lifetime = Mathf.Max(0.25f, dropLifetime);
+
+            if (spriteRenderer != null)
+            {
+                Color color = spriteRenderer.color;
+                color.a = 1f;
+                spriteRenderer.color = color;
+            }
+        }
 
         private void Awake()
         {
@@ -39,6 +59,11 @@ namespace MicroDefense.Enemies
         private void Start()
         {
             StartCoroutine(DropAnimation());
+
+            if (expirationCoroutine == null)
+            {
+                expirationCoroutine = StartCoroutine(ExpirationRoutine());
+            }
         }
 
         private IEnumerator DropAnimation()
@@ -63,15 +88,77 @@ namespace MicroDefense.Enemies
             transform.localScale = baseScale;
         }
 
+        private IEnumerator ExpirationRoutine()
+        {
+            float elapsed = 0f;
+            float warningWindow = Mathf.Clamp(lifetime * warningThreshold, 0.25f, lifetime);
+
+            while (elapsed < lifetime && !collected && !destructionStarted)
+            {
+                elapsed += Time.deltaTime;
+                float remaining = Mathf.Max(0f, lifetime - elapsed);
+                float warningProgress = Mathf.Clamp01(1f - (remaining / Mathf.Max(0.001f, warningWindow)));
+
+                if (spriteRenderer != null)
+                {
+                    Color color = spriteRenderer.color;
+                    color.a = Mathf.Lerp(1f, 0.35f, Mathf.Clamp01(elapsed / lifetime));
+
+                    if (remaining <= warningWindow)
+                    {
+                        float blinkRate = Mathf.Lerp(blinkMaxInterval, blinkMinInterval, warningProgress);
+                        float pulse = Mathf.PingPong(Time.time * (1f / Mathf.Max(blinkRate, 0.05f)), 1f);
+                        color.a = Mathf.Lerp(0.35f, 1f, pulse);
+                    }
+
+                    spriteRenderer.color = color;
+                }
+
+                yield return null;
+            }
+
+            if (collected || destructionStarted)
+            {
+                yield break;
+            }
+
+            BeginDestruction();
+        }
+
+        private void BeginDestruction()
+        {
+            if (destructionStarted)
+            {
+                return;
+            }
+
+            destructionStarted = true;
+
+            if (expirationCoroutine != null)
+            {
+                StopCoroutine(expirationCoroutine);
+                expirationCoroutine = null;
+            }
+
+            if (dropCollider != null)
+            {
+                dropCollider.enabled = false;
+            }
+
+            if (fadeOutCoroutine == null)
+            {
+                fadeOutCoroutine = StartCoroutine(FadeOutAndDestroy());
+            }
+        }
+
         private void OnMouseDown()
         {
-            if (collected) return;
+            if (collected || destructionStarted) return;
             collected = true;
 
             if (dropCollider != null)
                 dropCollider.enabled = false;
 
-        
             if (AudioManager.Instance != null)
             {
                 AudioManager.Instance.PlayPlasmaPickup();
@@ -80,7 +167,7 @@ namespace MicroDefense.Enemies
             if (PlasmaManager.Instance != null)
                 PlasmaManager.Instance.AddPlasma(value);
 
-            StartCoroutine(FadeOutAndDestroy());
+            BeginDestruction();
         }
 
         private IEnumerator FadeOutAndDestroy()

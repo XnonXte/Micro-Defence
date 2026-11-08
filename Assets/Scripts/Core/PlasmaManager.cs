@@ -11,8 +11,12 @@ namespace MicroDefense.Core
         [Header("Plasma Economy")]
         [SerializeField] private int startingPlasma = 300;
         [SerializeField] private float dropScale = 0.45f;
+        [SerializeField] private float dropLifetime = 8f;
+        [SerializeField] private float maxDropSpawnRadius = 2.5f;
         public int CurrentPlasma { get; private set; }
         public float DropScale => dropScale;
+        public float DropLifetime => dropLifetime;
+        public float MaxDropSpawnRadius => maxDropSpawnRadius;
 
         public event Action<int> OnPlasmaChanged;
 
@@ -58,8 +62,23 @@ namespace MicroDefense.Core
 
         public void SpawnDrop(Vector3 position, int value)
         {
+            SpawnDrop(position, value, dropLifetime, maxDropSpawnRadius);
+        }
+
+        public void SpawnDrop(Vector3 position, int value, float lifetime)
+        {
+            SpawnDrop(position, value, lifetime, maxDropSpawnRadius);
+        }
+
+        public void SpawnDrop(Vector3 position, int value, float lifetime, float spawnRadius)
+        {
+            float safeLifetime = Mathf.Max(0.25f, lifetime);
+            float safeRadius = Mathf.Max(0f, spawnRadius);
+            Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * safeRadius;
+            Vector3 dropPosition = new Vector3(position.x + randomOffset.x, position.y + randomOffset.y, position.z);
+
             GameObject drop = new GameObject("PlasmaDrop");
-            drop.transform.position = position;
+            drop.transform.position = dropPosition;
             drop.transform.localScale = Vector3.one * Mathf.Max(0.01f, dropScale);
             
             // Set layer ke TransparentFX (layer 1) - layer ini tidak digunakan untuk enemy detection
@@ -84,8 +103,7 @@ namespace MicroDefense.Core
             collider.isTrigger = true;
 
             var pickup = drop.AddComponent<PlasmaDrop>();
-            var valueField = typeof(PlasmaDrop).GetField("value", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            valueField?.SetValue(pickup, Mathf.Max(1, value));
+            pickup.Initialize(Mathf.Max(1, value), safeLifetime);
         }
     }
 }
